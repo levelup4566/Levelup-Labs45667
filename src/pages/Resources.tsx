@@ -1,21 +1,19 @@
 
 import React from 'react';
-import Hero from '@/components/home/Hero';
-import Features from '@/components/home/Features';
+import ResourceLibrary from '@/components/resources/ResourceLibrary';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
-const Index = () => {
+const Resources = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1">
-        <Hero />
-        <Features />
+      <main className="flex-1 pt-24">
+        <ResourceLibrary />
       </main>
       <Footer />
     </div>
   );
 };
 
-export default Index;
+export default Resources;
