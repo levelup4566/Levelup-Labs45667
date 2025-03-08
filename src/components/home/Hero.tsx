@@ -16,7 +16,7 @@ const Hero = () => {
         <div className="max-w-4xl mx-auto text-center mb-16 md:mb-20">
           <div className="inline-flex items-center px-3 py-1 mb-6 rounded-full bg-primary/10 text-primary text-sm font-medium animate-fade-in backdrop-blur-sm border border-primary/20">
             <Sparkles className="h-4 w-4 mr-2" />
-            <span>Free education for everyone</span>
+            <span>Personalized Learning Platform</span>
           </div>
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 font-display">
@@ -25,7 +25,7 @@ const Hero = () => {
           </h1>
           
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            Access high-quality educational resources, build personalized learning paths, and track your skills development all in one place.
+            Access high-quality best educational resources from whole internet, build personalized learning paths, and track your skills development all in one place.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
@@ -50,7 +50,7 @@ const Hero = () => {
                   <div className="feature-icon mb-4 animate-float">
                     <BookOpen className="h-6 w-6" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">10,000+ Resources</h3>
+                  <h3 className="font-semibold text-lg mb-2">Access high quality Resources from internet</h3>
                   <p className="text-muted-foreground text-sm">Curated educational content for all skill levels</p>
                 </div>
                 
