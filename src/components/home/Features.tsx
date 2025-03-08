@@ -1,19 +1,23 @@
 
 import React from 'react';
-import { Book, Star, BarChart, Layout, BookOpen, Clock, Monitor, Users } from 'lucide-react';
+import { Book, Star, BarChart, Layout, BookOpen, Clock, Monitor, Users, Sparkles } from 'lucide-react';
 
 interface FeatureProps {
   icon: React.ReactNode;
   title: string;
   description: string;
+  delay: number;
 }
 
-const FeatureCard = ({ icon, title, description }: FeatureProps) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-border/50">
-    <div className="feature-icon mb-4">
+const FeatureCard = ({ icon, title, description, delay }: FeatureProps) => (
+  <div 
+    className="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 border border-white/20"
+    style={{ animationDelay: `${delay * 0.1}s` }}
+  >
+    <div className="feature-icon mb-4 animate-float" style={{ animationDelay: `${delay * 0.1}s` }}>
       {icon}
     </div>
-    <h3 className="text-xl font-medium mb-2">{title}</h3>
+    <h3 className="text-xl font-medium mb-2 font-display">{title}</h3>
     <p className="text-muted-foreground">{description}</p>
   </div>
 );
@@ -63,10 +67,19 @@ const Features = () => {
   ];
   
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-background bg-hero-pattern relative overflow-hidden">
+      {/* Background blobs */}
+      <div className="blob h-96 w-96 -top-48 -left-48 opacity-50"></div>
+      <div className="blob h-96 w-96 -bottom-48 -right-48 opacity-50" style={{ animationDelay: '3s' }}></div>
+      
+      <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything you need to learn effectively</h2>
+          <div className="inline-flex items-center px-3 py-1 mb-6 rounded-full bg-accent/10 text-accent text-sm font-medium">
+            <Sparkles className="h-4 w-4 mr-2" />
+            <span>Powerful learning tools</span>
+          </div>
+          
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-display">Everything you need to learn effectively</h2>
           <p className="text-lg text-muted-foreground">
             Our platform combines powerful features to create the perfect learning environment
           </p>
@@ -79,6 +92,7 @@ const Features = () => {
               icon={feature.icon}
               title={feature.title}
               description={feature.description}
+              delay={index}
             />
           ))}
         </div>
