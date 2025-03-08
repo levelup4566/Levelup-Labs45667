@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, Users, Star, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Star, Sparkles, Search, Layers, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
@@ -68,6 +68,72 @@ const Hero = () => {
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Skill Points</h3>
                   <p className="text-muted-foreground text-sm">Track progress and earn rewards as you learn</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* New section: What makes us different */}
+        <div className="max-w-5xl mx-auto mt-24 relative">
+          <div className="glass-card rounded-xl p-8 backdrop-blur-sm border border-white/20 shadow-xl animate-fade-in" style={{ animationDelay: "0.6s" }}>
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center px-3 py-1 mb-4 rounded-full bg-secondary/10 text-secondary text-sm font-medium">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                <span>What Makes Us Different</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4 font-display">Why choose our platform?</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                We solve the main problem of structured learning with free resources through our carefully designed platform
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
+                  <Search className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xl mb-2">Curated Research</h3>
+                  <p className="text-muted-foreground">
+                    We research the best resources from YouTube, educational websites, and other platforms to bring you only high-quality content that's worth your time.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
+                  <Layers className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xl mb-2">Structured Learning</h3>
+                  <p className="text-muted-foreground">
+                    Content is categorized according to modules, course content, and curriculum designed by industry experts to ensure effective learning paths.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
+                  <CheckCircle className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xl mb-2">Quality Assurance</h3>
+                  <p className="text-muted-foreground">
+                    Every resource undergoes a thorough vetting process to ensure it meets our standards for accuracy, clarity, and educational value.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xl mb-2">Community-Driven</h3>
+                  <p className="text-muted-foreground">
+                    Our community helps identify and rate resources, ensuring our platform continually improves and stays current with the best learning materials.
+                  </p>
                 </div>
               </div>
             </div>
