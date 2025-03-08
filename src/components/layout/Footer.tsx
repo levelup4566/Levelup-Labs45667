@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, Heart, Github, Twitter } from 'lucide-react';
+import { Layers, Heart, Github, Twitter } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -43,7 +43,7 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-2 mb-4">
-              <BookOpen className="h-6 w-6 text-primary" />
+              <Layers className="h-6 w-6 text-primary" />
               <span className="text-lg font-semibold">Levelup Labs</span>
             </Link>
             <p className="text-muted-foreground mb-4 max-w-md">

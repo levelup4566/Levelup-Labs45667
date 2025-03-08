@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Menu, X, BookOpen, Sparkles } from 'lucide-react';
+import { Menu, X, Layers, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Header = () => {
@@ -38,7 +38,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="relative">
-              <BookOpen className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
+              <Layers className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
               <Sparkles className="h-4 w-4 absolute -top-1 -right-1 text-accent animate-pulse-slow" />
             </div>
             <span className="text-xl font-semibold font-display">Levelup Labs</span>
