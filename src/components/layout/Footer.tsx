@@ -44,7 +44,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-2 mb-4">
               <BookOpen className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">EduPath</span>
+              <span className="text-lg font-semibold">Levelup Labs</span>
             </Link>
             <p className="text-muted-foreground mb-4 max-w-md">
               Accessible education for everyone. Our platform offers free learning resources and personalized learning paths to help you achieve your goals.
@@ -83,7 +83,7 @@ const Footer = () => {
         
         <div className="border-t border-border/40 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-            © {currentYear} EduPath. All rights reserved.
+            © {currentYear} Levelup Labs. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground flex items-center">
             Made with <Heart className="h-4 w-4 text-red-500 mx-1" /> for accessible education

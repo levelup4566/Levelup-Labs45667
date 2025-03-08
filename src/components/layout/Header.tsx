@@ -41,7 +41,7 @@ const Header = () => {
               <BookOpen className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
               <Sparkles className="h-4 w-4 absolute -top-1 -right-1 text-accent animate-pulse-slow" />
             </div>
-            <span className="text-xl font-semibold font-display">EduPath</span>
+            <span className="text-xl font-semibold font-display">Levelup Labs</span>
           </Link>
           
           {/* Desktop Navigation */}
