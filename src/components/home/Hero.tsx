@@ -82,7 +82,7 @@ const Hero = () => {
                 <CheckCircle className="h-4 w-4 mr-2" />
                 <span>What Makes Us Different</span>
               </div>
-              <h2 className="text-3xl font-bold mb-4 font-display">Why choose Levelup Labs?</h2>
+              <h2 className="text-3xl font-bold mb-4 font-display">How We're Different From Paid Course Platforms</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 We solve the main problem of structured learning with free resources through our carefully designed platform
               </p>
