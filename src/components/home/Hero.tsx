@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, Users, Star, Sparkles, Search, Layers, CheckCircle, X } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Star, Sparkles, Search, Layers, CheckCircle, X, BriefcaseBusiness, DollarSign, Rocket } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -76,6 +76,50 @@ const Hero = () => {
           </div>
         </div>
         
+        {/* Why Learn From This Platform? section */}
+        <div className="max-w-5xl mx-auto mt-24 relative">
+          <Card className="glass-card backdrop-blur-sm border border-white/20 shadow-xl animate-fade-in" style={{ animationDelay: "0.5s" }}>
+            <CardHeader className="text-center">
+              <div className="inline-flex items-center px-3 py-1 mb-4 rounded-full bg-accent/10 text-accent text-sm font-medium">
+                <Rocket className="h-4 w-4 mr-2" />
+                <span>Why Learn With Us?</span>
+              </div>
+              <CardTitle className="text-3xl font-bold mb-4 font-display">Why Learn From This Platform?</CardTitle>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Here's why Levelup Labs is the best choice for your learning journey
+              </p>
+            </CardHeader>
+            
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="flex flex-col items-center text-center p-4 rounded-lg transition-all duration-300 hover:bg-white/10">
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                    <DollarSign className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Completely Free</h3>
+                  <p className="text-muted-foreground">Access all learning resources, tools, and features without any subscription fees or hidden costs.</p>
+                </div>
+                
+                <div className="flex flex-col items-center text-center p-4 rounded-lg transition-all duration-300 hover:bg-white/10">
+                  <div className="h-16 w-16 rounded-full bg-accent/10 flex items-center justify-center mb-4">
+                    <BriefcaseBusiness className="h-8 w-8 text-accent" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Get Hired</h3>
+                  <p className="text-muted-foreground">Build a portfolio of real-world projects that showcase your skills to potential employers.</p>
+                </div>
+                
+                <div className="flex flex-col items-center text-center p-4 rounded-lg transition-all duration-300 hover:bg-white/10">
+                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                    <Rocket className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Learning By Doing</h3>
+                  <p className="text-muted-foreground">Apply your knowledge immediately with practical, hands-on projects that reinforce your learning.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
         {/* Comparison table section */}
         <div className="max-w-5xl mx-auto mt-24 relative">
           <Card className="glass-card backdrop-blur-sm border border-white/20 shadow-xl animate-fade-in" style={{ animationDelay: "0.6s" }}>
@@ -94,7 +138,7 @@ const Hero = () => {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="border-b border-white/20">
+                    <tr className="border-b-2 border-white/30">
                       <th className="text-left p-4 font-semibold text-lg">Feature</th>
                       <th className="p-4 font-semibold text-lg text-primary">Levelup Labs</th>
                       <th className="p-4 font-semibold text-lg">Paid Course Platforms</th>
