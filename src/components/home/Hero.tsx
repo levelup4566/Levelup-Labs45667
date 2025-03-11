@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, Users, Star, Sparkles, Search, Layers, CheckCircle } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Star, Sparkles, Search, Layers, CheckCircle, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const Hero = () => {
   return (
@@ -74,70 +76,117 @@ const Hero = () => {
           </div>
         </div>
         
-        {/* New section: What makes us different */}
+        {/* Comparison table section */}
         <div className="max-w-5xl mx-auto mt-24 relative">
-          <div className="glass-card rounded-xl p-8 backdrop-blur-sm border border-white/20 shadow-xl animate-fade-in" style={{ animationDelay: "0.6s" }}>
-            <div className="text-center mb-10">
+          <Card className="glass-card backdrop-blur-sm border border-white/20 shadow-xl animate-fade-in" style={{ animationDelay: "0.6s" }}>
+            <CardHeader className="text-center">
               <div className="inline-flex items-center px-3 py-1 mb-4 rounded-full bg-secondary/10 text-secondary text-sm font-medium">
                 <CheckCircle className="h-4 w-4 mr-2" />
-                <span>What Makes Us Different</span>
+                <span>Feature Comparison</span>
               </div>
-              <h2 className="text-3xl font-bold mb-4 font-display">How We're Different From Paid Course Platforms</h2>
+              <CardTitle className="text-3xl font-bold mb-4 font-display">Levelup Labs vs. Paid Course Platforms</CardTitle>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                We solve the main problem of structured learning with free resources through our carefully designed platform
+                See how our platform compares to traditional paid course alternatives
               </p>
-            </div>
+            </CardHeader>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
-                  <Search className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-xl mb-2">Curated Research</h3>
-                  <p className="text-muted-foreground">
-                    We research the best resources from YouTube, educational websites, and other platforms to bring you only high-quality content that's worth your time.
-                  </p>
-                </div>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/20">
+                      <th className="text-left p-4 font-semibold text-lg">Feature</th>
+                      <th className="p-4 font-semibold text-lg text-primary">Levelup Labs</th>
+                      <th className="p-4 font-semibold text-lg">Paid Course Platforms</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-white/10">
+                      <td className="p-4 font-medium">Cost</td>
+                      <td className="p-4 text-center">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <CheckCircle className="h-5 w-5 text-accent mx-auto" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Completely free!</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </td>
+                      <td className="p-4 text-center">
+                        <span className="inline-flex items-center justify-center px-2 py-1 rounded bg-muted text-xs">$15-200/month</span>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-white/10">
+                      <td className="p-4 font-medium">Learning Resources</td>
+                      <td className="p-4 text-center">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <CheckCircle className="h-5 w-5 text-accent mx-auto" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Best free resources from across the web</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </td>
+                      <td className="p-4 text-center">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <CheckCircle className="h-5 w-5 text-muted-foreground mx-auto" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Platform-specific content only</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-white/10">
+                      <td className="p-4 font-medium">Content Diversity</td>
+                      <td className="p-4 text-center">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <CheckCircle className="h-5 w-5 text-accent mx-auto" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Multiple teaching styles and approaches</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </td>
+                      <td className="p-4 text-center">
+                        <X className="h-5 w-5 text-muted-foreground mx-auto" />
+                      </td>
+                    </tr>
+                    <tr className="border-b border-white/10">
+                      <td className="p-4 font-medium">Progress Tracking</td>
+                      <td className="p-4 text-center">
+                        <CheckCircle className="h-5 w-5 text-accent mx-auto" />
+                      </td>
+                      <td className="p-4 text-center">
+                        <CheckCircle className="h-5 w-5 text-muted-foreground mx-auto" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-medium">Custom Learning Paths</td>
+                      <td className="p-4 text-center">
+                        <CheckCircle className="h-5 w-5 text-accent mx-auto" />
+                      </td>
+                      <td className="p-4 text-center">
+                        <X className="h-5 w-5 text-muted-foreground mx-auto" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
-                  <Layers className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-xl mb-2">Structured Learning</h3>
-                  <p className="text-muted-foreground">
-                    Content is categorized according to modules, course content, and curriculum designed by industry experts to ensure effective learning paths.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
-                  <CheckCircle className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-xl mb-2">Quality Assurance</h3>
-                  <p className="text-muted-foreground">
-                    Every resource undergoes a thorough vetting process to ensure it meets our standards for accuracy, clarity, and educational value.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 p-2 rounded-lg bg-primary/10">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-xl mb-2">Community-Driven</h3>
-                  <p className="text-muted-foreground">
-                    Our community helps identify and rate resources, ensuring our platform continually improves and stays current with the best learning materials.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
