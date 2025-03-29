@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
@@ -48,9 +49,15 @@ const OnboardingLayout = () => {
   
   const goToNextStep = () => {
     if (isLastStep) {
-      // If this is the last step, finish onboarding
+      // If this is the last step, finish onboarding and navigate to course dashboard
       console.log('Onboarding complete with data:', onboardingData);
-      navigate('/'); // Redirect to home or dashboard
+      navigate('/course-dashboard', { 
+        state: { 
+          learningGoal: onboardingData.learningGoal,
+          timeCommitment: onboardingData.timeCommitment,
+          experienceLevel: onboardingData.experienceLevel
+        } 
+      });
       return;
     }
     
