@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Menu, X, Layers, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +23,10 @@ const Header = () => {
   const navLinks = [
     { title: 'Home', path: '/' },
   ];
+
+  const handleGetStarted = () => {
+    navigate('/sign-up');
+  };
   
   return (
     <header 
@@ -59,8 +64,21 @@ const Header = () => {
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="hover:bg-white/20 backdrop-blur-sm">Sign In</Button>
-            <Button size="sm" className="bg-primary hover:bg-primary/90 transition-colors">Get Started</Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="hover:bg-white/20 backdrop-blur-sm"
+              onClick={() => navigate('/sign-in')}
+            >
+              Sign In
+            </Button>
+            <Button 
+              size="sm" 
+              className="bg-primary hover:bg-primary/90 transition-colors"
+              onClick={handleGetStarted}
+            >
+              Get Started
+            </Button>
           </div>
           
           {/* Mobile Menu Button */}
@@ -97,8 +115,25 @@ const Header = () => {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-2 border-t border-white/20">
-                <Button variant="ghost" className="justify-start hover:bg-white/20">Sign In</Button>
-                <Button className="justify-start">Get Started</Button>
+                <Button 
+                  variant="ghost" 
+                  className="justify-start hover:bg-white/20"
+                  onClick={() => {
+                    navigate('/sign-in');
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  Sign In
+                </Button>
+                <Button 
+                  className="justify-start"
+                  onClick={() => {
+                    navigate('/sign-up');
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  Get Started
+                </Button>
               </div>
             </nav>
           </div>
