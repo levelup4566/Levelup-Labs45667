@@ -10,13 +10,13 @@ const experienceLevels = [
   { 
     id: 'beginner', 
     title: 'Complete Beginner', 
-    description: 'I'm just starting out and have little to no experience',
+    description: "I'm just starting out and have little to no experience",
     icon: Baby
   },
   { 
     id: 'novice', 
     title: 'Novice', 
-    description: 'I've tried a few things but still need lots of guidance',
+    description: "I've tried a few things but still need lots of guidance",
     icon: User
   },
   { 
