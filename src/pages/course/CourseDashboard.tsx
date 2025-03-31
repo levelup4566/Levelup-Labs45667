@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
 import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import { ChevronLeft, PlayCircle } from 'lucide-react';
 
 // Mock data based on learning goals
@@ -193,7 +194,28 @@ const getCourseModules = (learningGoal: string) => {
 
 const CourseDashboard = () => {
   const location = useLocation();
-  const { learningGoal, experienceLevel } = location.state || {};
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Get learning goal from state or default to first option if missing
+  const [learningGoal, setLearningGoal] = useState<string>('');
+  const [experienceLevel, setExperienceLevel] = useState<string>('');
+  
+  // Initialize state with correct values from location.state
+  useEffect(() => {
+    if (location.state) {
+      setLearningGoal(location.state.learningGoal || 'coding');
+      setExperienceLevel(location.state.experienceLevel || 'beginner');
+    } else {
+      // If no state is present, show a toast and redirect to onboarding
+      toast({
+        title: "Missing learning preferences",
+        description: "Please complete the onboarding process first.",
+        variant: "destructive",
+      });
+      navigate('/onboarding');
+    }
+  }, [location.state, navigate, toast]);
   
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
@@ -234,6 +256,22 @@ const CourseDashboard = () => {
     }
   };
 
+  // Only render the dashboard content if we have a learning goal
+  if (!learningGoal) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <RouterHeader />
+        <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">Loading your course...</h2>
+            <p className="text-muted-foreground mt-2">Please wait while we prepare your personalized learning content.</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <RouterHeader />
@@ -244,6 +282,13 @@ const CourseDashboard = () => {
             <p className="text-muted-foreground mt-2">
               Personalized learning path based on your interests and experience level
             </p>
+            {experienceLevel && (
+              <div className="mt-2">
+                <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground">
+                  {experienceLevel} level
+                </span>
+              </div>
+            )}
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

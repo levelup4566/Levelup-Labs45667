@@ -13,6 +13,7 @@ import OnboardingGoals from "./pages/onboarding/OnboardingGoals";
 import OnboardingTime from "./pages/onboarding/OnboardingTime";
 import OnboardingExperience from "./pages/onboarding/OnboardingExperience";
 import CourseDashboard from "./pages/course/CourseDashboard";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="experience" element={<OnboardingExperience />} />
           </Route>
           <Route path="/course-dashboard" element={<CourseDashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
