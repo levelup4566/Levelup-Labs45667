@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChevronDown, ChevronRight, Play } from 'lucide-react';
+import { ChevronDown, ChevronRight, Play, Check } from 'lucide-react';
 import { 
   Accordion,
   AccordionContent,
@@ -15,6 +15,7 @@ export type ModuleVideo = {
   title: string;
   duration: string;
   videoUrl: string;
+  completed?: boolean;
 };
 
 export type CourseSubModule = {
@@ -31,6 +32,8 @@ export type CourseModuleProps = {
   subModules: CourseSubModule[];
   expanded?: boolean;
   onSelect?: (videoId: string) => void;
+  completedVideos?: string[];
+  onToggleComplete?: (videoId: string) => void;
 };
 
 const CourseModule = ({ 
@@ -40,7 +43,9 @@ const CourseModule = ({
   tags = [], 
   subModules, 
   expanded = false,
-  onSelect 
+  onSelect,
+  completedVideos = [],
+  onToggleComplete
 }: CourseModuleProps) => {
   return (
     <Accordion 
@@ -78,20 +83,38 @@ const CourseModule = ({
               <div key={subModule.id} className="mb-6 last:mb-0">
                 <h4 className="font-medium text-sm mb-2">{subModule.title}</h4>
                 <div className="space-y-2">
-                  {subModule.videos.map((video) => (
-                    <Button
-                      key={video.id}
-                      variant="ghost"
-                      className="w-full justify-start text-left p-2 h-auto gap-2"
-                      onClick={() => onSelect && onSelect(video.id)}
-                    >
-                      <Play className="w-4 h-4 text-blue-500" />
-                      <div className="flex-1">
-                        <p className="text-sm">{video.title}</p>
-                        <p className="text-xs text-muted-foreground">{video.duration}</p>
+                  {subModule.videos.map((video) => {
+                    const isCompleted = completedVideos.includes(video.id);
+                    return (
+                      <div key={video.id} className="flex items-center">
+                        <Button
+                          variant="ghost"
+                          className={`w-full justify-start text-left p-2 h-auto gap-2 ${isCompleted ? 'text-muted-foreground' : ''}`}
+                          onClick={() => onSelect && onSelect(video.id)}
+                        >
+                          {isCompleted ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <Play className="w-4 h-4 text-blue-500" />
+                          )}
+                          <div className="flex-1">
+                            <p className={`text-sm ${isCompleted ? 'line-through' : ''}`}>
+                              {video.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{video.duration}</p>
+                          </div>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onToggleComplete && onToggleComplete(video.id)}
+                        >
+                          <Check className={`h-4 w-4 ${isCompleted ? 'text-green-600' : 'text-gray-300'}`} />
+                        </Button>
                       </div>
-                    </Button>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}

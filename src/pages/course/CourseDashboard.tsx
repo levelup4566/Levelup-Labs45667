@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
@@ -18,8 +17,16 @@ import {
   CheckCircle 
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { 
+  Card,
+  CardContent
+} from '@/components/ui/card';
+import { 
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from '@/components/ui/collapsible';
 
-// Mock data based on learning goals
 const getCourseModules = (learningGoal: string) => {
   switch (learningGoal) {
     case 'coding':
@@ -208,17 +215,14 @@ const CourseDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Get learning goal from state or default to first option if missing
   const [learningGoal, setLearningGoal] = useState<string>('');
   const [experienceLevel, setExperienceLevel] = useState<string>('');
   
-  // Initialize state with correct values from location.state
   useEffect(() => {
     if (location.state) {
       setLearningGoal(location.state.learningGoal || 'coding');
       setExperienceLevel(location.state.experienceLevel || 'beginner');
     } else {
-      // If no state is present, show a toast and redirect to onboarding
       toast({
         title: "Missing learning preferences",
         description: "Please complete the onboarding process first.",
@@ -230,15 +234,33 @@ const CourseDashboard = () => {
   
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
-  const [overallProgress, setOverallProgress] = useState<number>(32);
+  const [completedVideos, setCompletedVideos] = useState<string[]>([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState<number>(0);
   
   const modules = getCourseModules(learningGoal);
   
+  const calculateOverallProgress = () => {
+    if (!modules || modules.length === 0) return 0;
+    
+    let totalVideos = 0;
+    modules.forEach(module => {
+      module.subModules.forEach(subModule => {
+        totalVideos += subModule.videos.length;
+      });
+    });
+    
+    return totalVideos > 0 ? Math.round((completedVideos.length / totalVideos) * 100) : 0;
+  };
+  
+  const [overallProgress, setOverallProgress] = useState<number>(0);
+  
+  useEffect(() => {
+    setOverallProgress(calculateOverallProgress());
+  }, [completedVideos]);
+  
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);
     
-    // Find the selected video to display its title
     for (const module of modules) {
       for (const subModule of module.subModules) {
         const video = subModule.videos.find(v => v.id === videoId);
@@ -248,6 +270,24 @@ const CourseDashboard = () => {
         }
       }
     }
+  };
+  
+  const handleToggleComplete = (videoId: string) => {
+    setCompletedVideos(prev => {
+      if (prev.includes(videoId)) {
+        return prev.filter(id => id !== videoId);
+      } else {
+        return [...prev, videoId];
+      }
+    });
+    
+    toast({
+      title: completedVideos.includes(videoId) ? "Lesson marked as incomplete" : "Lesson completed!",
+      description: completedVideos.includes(videoId) 
+        ? "You can revisit this lesson anytime." 
+        : "Great job! Keep up the good work.",
+      variant: completedVideos.includes(videoId) ? "default" : "default",
+    });
   };
   
   const getCourseTitleByGoal = (goal: string) => {
@@ -269,7 +309,6 @@ const CourseDashboard = () => {
     }
   };
 
-  // Only render the dashboard content if we have a learning goal
   if (!learningGoal) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
@@ -289,7 +328,6 @@ const CourseDashboard = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <RouterHeader />
       <main className="flex-1 pt-24 pb-16 bg-gradient-to-b from-background to-background/80">
-        {/* Hero Header */}
         <div className="bg-gradient-to-r from-primary/90 to-accent/80 text-white mb-8">
           <div className="container px-4 py-6 max-w-6xl">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -338,7 +376,6 @@ const CourseDashboard = () => {
         </div>
 
         <div className="container px-4 max-w-6xl">
-          {/* Course Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-card rounded-lg border shadow-sm p-4 flex items-center gap-4">
               <div className="bg-primary/10 p-3 rounded-full">
@@ -388,6 +425,8 @@ const CourseDashboard = () => {
                       {...module}
                       expanded={index === currentModuleIndex}
                       onSelect={handleVideoSelect}
+                      completedVideos={completedVideos}
+                      onToggleComplete={handleToggleComplete}
                     />
                   ))}
                 </div>
@@ -413,18 +452,23 @@ const CourseDashboard = () => {
                         </div>
                       </div>
                       
-                      {/* Video Thumbnail Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-70"></div>
                     </div>
                     <div className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <h2 className="text-xl font-medium">{currentVideoTitle}</h2>
                         <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm">
-                            Notes
+                          <Button 
+                            variant={completedVideos.includes(selectedVideoId) ? "default" : "outline"} 
+                            size="sm" 
+                            onClick={() => handleToggleComplete(selectedVideoId)}
+                            className="gap-2"
+                          >
+                            <Check className="h-4 w-4" />
+                            {completedVideos.includes(selectedVideoId) ? "Completed" : "Mark Complete"}
                           </Button>
                           <Button variant="outline" size="sm">
-                            Resources
+                            Notes
                           </Button>
                         </div>
                       </div>
