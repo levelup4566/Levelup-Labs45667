@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
@@ -14,7 +15,8 @@ import {
   Users,
   Calendar,
   ArrowRight,
-  CheckCircle 
+  CheckCircle,
+  Check 
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { 
