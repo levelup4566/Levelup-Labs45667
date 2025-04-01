@@ -6,7 +6,18 @@ import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ChevronLeft, PlayCircle } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  PlayCircle, 
+  BookOpen, 
+  BarChart3, 
+  BookMarked,
+  Users,
+  Calendar,
+  ArrowRight,
+  CheckCircle 
+} from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 
 // Mock data based on learning goals
 const getCourseModules = (learningGoal: string) => {
@@ -219,6 +230,8 @@ const CourseDashboard = () => {
   
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
+  const [overallProgress, setOverallProgress] = useState<number>(32);
+  const [currentModuleIndex, setCurrentModuleIndex] = useState<number>(0);
   
   const modules = getCourseModules(learningGoal);
   
@@ -275,35 +288,115 @@ const CourseDashboard = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <RouterHeader />
-      <main className="flex-1 pt-24 pb-16">
-        <div className="container px-4 max-w-6xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold">{getCourseTitleByGoal(learningGoal)}</h1>
-            <p className="text-muted-foreground mt-2">
-              Personalized learning path based on your interests and experience level
-            </p>
-            {experienceLevel && (
-              <div className="mt-2">
-                <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-secondary text-secondary-foreground">
-                  {experienceLevel} level
-                </span>
+      <main className="flex-1 pt-24 pb-16 bg-gradient-to-b from-background to-background/80">
+        {/* Hero Header */}
+        <div className="bg-gradient-to-r from-primary/90 to-accent/80 text-white mb-8">
+          <div className="container px-4 py-6 max-w-6xl">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <button 
+                    onClick={() => navigate('/dashboard')} 
+                    className="p-1.5 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <span className="text-sm font-medium">Back to Dashboard</span>
+                </div>
+                <h1 className="text-3xl font-bold">{getCourseTitleByGoal(learningGoal)}</h1>
+                <div className="flex flex-wrap items-center gap-3 mt-2">
+                  {experienceLevel && (
+                    <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm px-2.5 py-0.5 text-xs font-semibold text-white">
+                      {experienceLevel} level
+                    </span>
+                  )}
+                  <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm px-2.5 py-0.5 text-xs font-semibold text-white">
+                    <Users className="mr-1 h-3 w-3" />
+                    2,145 enrolled
+                  </span>
+                  <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm px-2.5 py-0.5 text-xs font-semibold text-white">
+                    <Calendar className="mr-1 h-3 w-3" />
+                    Updated 2 weeks ago
+                  </span>
+                </div>
               </div>
-            )}
+              <div className="mt-4 md:mt-0 bg-white/10 backdrop-blur-sm rounded-lg p-3 flex items-center gap-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{overallProgress}%</div>
+                  <div className="text-xs text-white/80">Completed</div>
+                </div>
+                <div className="flex-1 max-w-[120px]">
+                  <Progress value={overallProgress} className="h-2 bg-white/20" />
+                  <div className="flex justify-between mt-1 text-xs text-white/80">
+                    <span>Progress</span>
+                    <span>{modules.length > 0 ? `${modules[0].id}/${modules.length}` : "0/0"}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="container px-4 max-w-6xl">
+          {/* Course Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-card rounded-lg border shadow-sm p-4 flex items-center gap-4">
+              <div className="bg-primary/10 p-3 rounded-full">
+                <BookOpen className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Total Modules</div>
+                <div className="text-2xl font-semibold">{modules.length}</div>
+              </div>
+            </div>
+            
+            <div className="bg-card rounded-lg border shadow-sm p-4 flex items-center gap-4">
+              <div className="bg-accent/10 p-3 rounded-full">
+                <CheckCircle className="h-6 w-6 text-accent" />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Completed</div>
+                <div className="text-2xl font-semibold">
+                  {Math.round(modules.length * (overallProgress / 100))} / {modules.length}
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-card rounded-lg border shadow-sm p-4 flex items-center gap-4">
+              <div className="bg-secondary/30 p-3 rounded-full">
+                <BookMarked className="h-6 w-6 text-secondary-foreground" />
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground">Estimated Time</div>
+                <div className="text-2xl font-semibold">8h 45m</div>
+              </div>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 space-y-6">
-              <div className="bg-card rounded-lg border shadow-sm p-4">
-                <h2 className="text-lg font-medium mb-4">Course Modules</h2>
-                <div className="space-y-1">
+            <div className="lg:col-span-1">
+              <div className="bg-card rounded-lg border shadow-sm p-4 mb-4 sticky top-24">
+                <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  Course Modules
+                </h2>
+                
+                <div className="space-y-2">
                   {modules.map((module, index) => (
                     <CourseModule 
                       key={module.id}
                       {...module}
-                      expanded={index === 0}
+                      expanded={index === currentModuleIndex}
                       onSelect={handleVideoSelect}
                     />
                   ))}
+                </div>
+                
+                <div className="mt-6 pt-4 border-t">
+                  <Button className="w-full gap-2">
+                    Certification Exam
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </div>
@@ -312,29 +405,57 @@ const CourseDashboard = () => {
               <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
                 {selectedVideoId ? (
                   <div>
-                    <div className="aspect-video bg-black flex items-center justify-center">
-                      <div className="text-center p-8">
-                        <PlayCircle className="w-16 h-16 text-primary mx-auto mb-4" />
-                        <p className="text-white">{currentVideoTitle}</p>
-                        <p className="text-gray-400 text-sm mt-2">Video player would be here</p>
+                    <div className="aspect-video bg-black flex items-center justify-center relative group">
+                      <div className="text-center p-8 z-10 relative">
+                        <PlayCircle className="w-16 h-16 text-primary mx-auto mb-4 cursor-pointer transition-transform group-hover:scale-110" />
+                        <div className="backdrop-blur-sm bg-black/30 p-2 rounded-lg inline-block">
+                          <p className="text-white">{currentVideoTitle}</p>
+                        </div>
                       </div>
+                      
+                      {/* Video Thumbnail Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-70"></div>
                     </div>
                     <div className="p-6">
-                      <h2 className="text-xl font-medium">{currentVideoTitle}</h2>
-                      <p className="text-muted-foreground mt-2">
-                        This is where video description and supplementary content would appear.
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-medium">{currentVideoTitle}</h2>
+                        <div className="flex items-center gap-2">
+                          <Button variant="outline" size="sm">
+                            Notes
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            Resources
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <p className="text-muted-foreground mt-2 mb-4">
+                        This comprehensive lesson covers key concepts and practical applications. Watch the video and follow along with the exercises to master the material.
                       </p>
+                      
+                      <div className="bg-secondary/30 p-4 rounded-lg">
+                        <h3 className="font-medium mb-2">Learning Objectives</h3>
+                        <ul className="list-disc pl-5 space-y-1 text-sm">
+                          <li>Understand core principles of {currentVideoTitle}</li>
+                          <li>Apply techniques in real-world scenarios</li>
+                          <li>Build practical skills through guided examples</li>
+                          <li>Complete the challenge project to test your knowledge</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 ) : (
                   <div className="p-8 text-center">
-                    <div className="bg-primary/10 p-4 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                      <PlayCircle className="w-10 h-10 text-primary" />
+                    <div className="bg-primary/10 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
+                      <PlayCircle className="w-12 h-12 text-primary" />
                     </div>
                     <h3 className="text-xl font-medium">Select a video to start learning</h3>
                     <p className="text-muted-foreground mt-2 max-w-md mx-auto">
                       Choose a module and video from the course outline to begin your learning journey
                     </p>
+                    <Button className="mt-6" onClick={() => handleVideoSelect(modules[0]?.subModules[0]?.videos[0]?.id || '')}>
+                      Start First Lesson
+                    </Button>
                   </div>
                 )}
               </div>
