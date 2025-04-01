@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { BookOpen, Clock, CheckCircle2, Zap } from 'lucide-react';
+import ProgressCircle from '@/components/ui/ProgressCircle';
 
 type Course = {
   id: number;
