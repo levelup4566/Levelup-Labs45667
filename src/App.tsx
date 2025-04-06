@@ -14,6 +14,7 @@ import OnboardingTime from "./pages/onboarding/OnboardingTime";
 import OnboardingExperience from "./pages/onboarding/OnboardingExperience";
 import CourseDashboard from "./pages/course/CourseDashboard";
 import Dashboard from "./pages/Dashboard";
+import Resources from "./pages/Resources"; // Import the Resources component
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { useState } from "react";
 
@@ -34,15 +35,21 @@ const App = () => {
         refetchOnWindowFocus: false, // Disable auto-refetch for better performance
         staleTime: 5 * 60 * 1000, // 5 minutes of cache validity
         gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes 
-        onError: (error: unknown) => {
-          // Log errors for monitoring
-          console.error('Query error:', error);
+        meta: {
+          // Handle errors at the query level
+          onError: (error: unknown) => {
+            // Log errors for monitoring
+            console.error('Query error:', error);
+          }
         }
       },
       mutations: {
-        onError: (error: unknown) => {
-          // Log mutation errors for monitoring
-          console.error('Mutation error:', error);
+        meta: {
+          // Handle errors at the mutation level
+          onError: (error: unknown) => {
+            // Log mutation errors for monitoring
+            console.error('Mutation error:', error);
+          }
         }
       }
     }
