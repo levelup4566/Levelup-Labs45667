@@ -14,32 +14,105 @@ import OnboardingTime from "./pages/onboarding/OnboardingTime";
 import OnboardingExperience from "./pages/onboarding/OnboardingExperience";
 import CourseDashboard from "./pages/course/CourseDashboard";
 import Dashboard from "./pages/Dashboard";
+import ErrorBoundary from "./components/common/ErrorBoundary";
+import { useState } from "react";
 
-const queryClient = new QueryClient();
+/**
+ * App Component - Root component that sets up the application structure
+ * 
+ * Sets up:
+ * - QueryClient for data fetching with proper error handling
+ * - Global UI providers (tooltip, toast notifications)
+ * - Routing with error boundaries for fault isolation
+ */
+const App = () => {
+  // Create and configure the QueryClient with robust error handling
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1, // Limit retries to prevent excessive network traffic on failure
+        refetchOnWindowFocus: false, // Disable auto-refetch for better performance
+        staleTime: 5 * 60 * 1000, // 5 minutes of cache validity
+        gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes 
+        onError: (error: unknown) => {
+          // Log errors for monitoring
+          console.error('Query error:', error);
+        }
+      },
+      mutations: {
+        onError: (error: unknown) => {
+          // Log mutation errors for monitoring
+          console.error('Mutation error:', error);
+        }
+      }
+    }
+  }));
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/onboarding" element={<OnboardingLayout />}>
-            <Route index element={<OnboardingGoals />} />
-            <Route path="time" element={<OnboardingTime />} />
-            <Route path="experience" element={<OnboardingExperience />} />
-          </Route>
-          <Route path="/course-dashboard" element={<CourseDashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <ErrorBoundary>
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={
+                <ErrorBoundary>
+                  <Index />
+                </ErrorBoundary>
+              } />
+              <Route path="/sign-in" element={
+                <ErrorBoundary>
+                  <SignIn />
+                </ErrorBoundary>
+              } />
+              <Route path="/sign-up" element={
+                <ErrorBoundary>
+                  <SignUp />
+                </ErrorBoundary>
+              } />
+              
+              {/* Onboarding flow */}
+              <Route path="/onboarding" element={
+                <ErrorBoundary>
+                  <OnboardingLayout />
+                </ErrorBoundary>
+              }>
+                <Route index element={<OnboardingGoals />} />
+                <Route path="time" element={<OnboardingTime />} />
+                <Route path="experience" element={<OnboardingExperience />} />
+              </Route>
+              
+              {/* Main application routes */}
+              <Route path="/course-dashboard" element={
+                <ErrorBoundary>
+                  <CourseDashboard />
+                </ErrorBoundary>
+              } />
+              <Route path="/dashboard" element={
+                <ErrorBoundary>
+                  <Dashboard />
+                </ErrorBoundary>
+              } />
+              <Route path="/resources" element={
+                <ErrorBoundary>
+                  <Resources />
+                </ErrorBoundary>
+              } />
+              
+              {/* 404 catch-all route */}
+              <Route path="*" element={
+                <ErrorBoundary>
+                  <NotFound />
+                </ErrorBoundary>
+              } />
+            </Routes>
+          </BrowserRouter>
+        </ErrorBoundary>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
