@@ -1,12 +1,16 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen, Users, Star, Sparkles, Search, Layers, CheckCircle, X, BriefcaseBusiness, DollarSign, Rocket } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowRight, Users, Star, Sparkles, Rocket, CheckCircle, X, BriefcaseBusiness, DollarSign, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const Hero = () => {
+  const handleJoinWaitlist = () => {
+    // TODO: Implement waitlist signup logic
+    // This could open a modal, navigate to a signup page, or trigger an email capture
+    console.log('Joining waitlist');
+  };
+
   return (
     <section className="relative hero-gradient pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
       {/* Background blob effects */}
@@ -31,15 +35,13 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <Button asChild size="lg" className="w-full sm:w-auto group transition-all">
-              <Link to="/resources" className="flex items-center">
-                Explore Resources <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto backdrop-blur-sm bg-white/10">
-              <Link to="/dashboard">
-                My Dashboard
-              </Link>
+            <Button 
+              onClick={handleJoinWaitlist} 
+              size="lg" 
+              className="w-full sm:w-auto group transition-all"
+            >
+              Join the Waitlist 
+              <UserPlus className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
             </Button>
           </div>
         </div>
