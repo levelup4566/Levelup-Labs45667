@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Users, Star, Sparkles, Rocket, CheckCircle, X, BriefcaseBusiness, DollarSign, UserPlus, BookOpen } from 'lucide-react';
@@ -7,30 +8,29 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/comp
 const Hero = () => {
   const handleJoinWaitlist = () => {
     // TODO: Implement waitlist signup logic
-    // This could open a modal, navigate to a signup page, or trigger an email capture
     console.log('Joining waitlist');
   };
 
   return (
-    <section className="relative hero-gradient pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+    <section className="relative bg-gradient-to-br from-green-50 to-green-100 pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
       {/* Background blob effects */}
-      <div className="blob h-64 w-64 top-20 left-10"></div>
-      <div className="blob h-80 w-80 bottom-10 right-10" style={{ animationDelay: '2s' }}></div>
-      <div className="blob h-72 w-72 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ animationDelay: '4s' }}></div>
+      <div className="blob h-64 w-64 top-20 left-10 bg-green-200/30"></div>
+      <div className="blob h-80 w-80 bottom-10 right-10 bg-green-300/30" style={{ animationDelay: '2s' }}></div>
+      <div className="blob h-72 w-72 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-green-100/30" style={{ animationDelay: '4s' }}></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-16 md:mb-20">
-          <div className="inline-flex items-center px-3 py-1 mb-6 rounded-full bg-primary/10 text-primary text-sm font-medium animate-fade-in backdrop-blur-sm border border-primary/20">
+          <div className="inline-flex items-center px-3 py-1 mb-6 rounded-full bg-green-500/10 text-green-700 text-sm font-medium animate-fade-in backdrop-blur-sm border border-green-500/20">
             <Sparkles className="h-4 w-4 mr-2" />
             <span>Personalized Learning Platform</span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 font-display">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 font-display text-green-900">
             <span className="relative inline-block animate-slide-in">Learn anything.</span> <br className="hidden sm:block" />
-            <span className="relative inline-block text-primary animate-slide-in" style={{ animationDelay: "0.1s" }}>Track your progress.</span>
+            <span className="relative inline-block text-green-700 animate-slide-in" style={{ animationDelay: "0.1s" }}>Track your progress.</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <p className="text-lg md:text-xl text-green-800/80 max-w-2xl mx-auto mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
             Access high-quality best educational resources from whole internet, build personalized learning paths, and track your skills development all in one place.
           </p>
           
@@ -38,7 +38,7 @@ const Hero = () => {
             <Button 
               onClick={handleJoinWaitlist} 
               size="lg" 
-              className="w-full sm:w-auto group transition-all"
+              className="w-full sm:w-auto group transition-all bg-green-600 hover:bg-green-700"
             >
               Join the Waitlist 
               <UserPlus className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
