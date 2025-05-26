@@ -17,6 +17,8 @@ import Dashboard from "./pages/Dashboard";
 import Resources from "./pages/Resources"; // Import the Resources component
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { useState } from "react";
+import SignInPage from "./routes/sign-in";
+import SignUpPage from "./routes/sign-up";
 
 /**
  * App Component - Root component that sets up the application structure
@@ -69,14 +71,14 @@ const App = () => {
                   <Index />
                 </ErrorBoundary>
               } />
-              <Route path="/sign-in" element={
+              <Route path="/signin/*" element={
                 <ErrorBoundary>
-                  <SignIn />
+                  <SignInPage />
                 </ErrorBoundary>
               } />
-              <Route path="/sign-up" element={
+              <Route path="/signup/*" element={
                 <ErrorBoundary>
-                  <SignUp />
+                  <SignUpPage />
                 </ErrorBoundary>
               } />
               
