@@ -4,11 +4,11 @@ import App from './App.tsx'
 import './index.css'
 import { ClerkProvider } from '@clerk/clerk-react'
 
-// Replace this with your actual Clerk publishable key from https://go.clerk.com/lovable
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_YOUR_KEY_HERE"
+// Your actual Clerk publishable key
+const PUBLISHABLE_KEY = "pk_test_bm9ybWFsLW1hbmF0ZWUtMzcuY2xlcmsuYWNjb3VudHMuZGV2JA"
 
-if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_YOUR_KEY_HERE") {
-    console.error("Please set your Clerk publishable key. Get it from https://go.clerk.com/lovable");
+if (!PUBLISHABLE_KEY) {
+    throw new Error("Missing Publishable Key");
 }
 
 createRoot(document.getElementById("root")!).render(
