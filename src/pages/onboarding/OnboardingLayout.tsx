@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { createContext, useContext, useState } from 'react';
@@ -8,9 +9,9 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 // Define the onboarding steps in order
 const ONBOARDING_STEPS = [
-  { path: '/onboarding', label: 'Learning Goals' },
-  { path: '/onboarding/time', label: 'Time Commitment' },
-  { path: '/onboarding/experience', label: 'Experience Level' },
+  { path: '/onboarding', label: 'Learning Goals', dataKey: 'learningGoal' },
+  { path: '/onboarding/time', label: 'Time Commitment', dataKey: 'timeCommitment' },
+  { path: '/onboarding/experience', label: 'Experience Level', dataKey: 'experienceLevel' },
 ];
 
 // Create a context to store and share onboarding data
@@ -22,6 +23,7 @@ type OnboardingContextType = {
   goToPreviousStep: () => void;
   isLastStep: boolean;
   isFirstStep: boolean;
+  canContinue: boolean;
 };
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
@@ -44,11 +46,17 @@ const OnboardingLayout = () => {
   const isLastStep = currentStepIndex === ONBOARDING_STEPS.length - 1;
   const isFirstStep = currentStepIndex === 0;
   
+  // Check if current step has required data
+  const currentStep = ONBOARDING_STEPS[currentStepIndex];
+  const canContinue = currentStep ? !!onboardingData[currentStep.dataKey] : false;
+  
   const updateOnboardingData = (key: string, value: any) => {
     setOnboardingData(prev => ({ ...prev, [key]: value }));
   };
   
   const goToNextStep = () => {
+    if (!canContinue) return;
+    
     if (isLastStep) {
       // If this is the last step, finish onboarding and navigate to course dashboard
       console.log('Onboarding complete with data:', onboardingData);
@@ -82,7 +90,8 @@ const OnboardingLayout = () => {
         goToNextStep,
         goToPreviousStep,
         isLastStep,
-        isFirstStep 
+        isFirstStep,
+        canContinue
       }}
     >
       <div className="min-h-screen flex flex-col bg-background">
@@ -127,7 +136,11 @@ const OnboardingLayout = () => {
                   Back
                 </Button>
                 
-                <Button onClick={goToNextStep}>
+                <Button 
+                  onClick={goToNextStep}
+                  disabled={!canContinue}
+                  className={!canContinue ? 'opacity-50 cursor-not-allowed' : ''}
+                >
                   {isLastStep ? 'Finish' : 'Continue'}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
