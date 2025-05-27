@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +18,9 @@ import ErrorBoundary from "./components/common/ErrorBoundary";
 import { useState } from "react";
 import SignInPage from "./routes/sign-in";
 import SignUpPage from "./routes/sign-up";
+import WebDevelopmentCourse from "./pages/courses/WebDevelopmentCourse";
+import DesignCourse from "./pages/courses/DesignCourse";
+import DataScienceCourse from "./pages/courses/DataScienceCourse";
 
 /**
  * App Component - Root component that sets up the application structure
@@ -92,6 +94,23 @@ const App = () => {
                 <Route path="time" element={<OnboardingTime />} />
                 <Route path="experience" element={<OnboardingExperience />} />
               </Route>
+              
+              {/* Course routes */}
+              <Route path="/courses/web-development" element={
+                <ErrorBoundary>
+                  <WebDevelopmentCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/design" element={
+                <ErrorBoundary>
+                  <DesignCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/data-science" element={
+                <ErrorBoundary>
+                  <DataScienceCourse />
+                </ErrorBoundary>
+              } />
               
               {/* Main application routes */}
               <Route path="/course-dashboard" element={
