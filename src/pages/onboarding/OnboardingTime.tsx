@@ -49,20 +49,26 @@ const OnboardingTime = () => {
       >
         {timeOptions.map((option) => {
           const Icon = option.icon;
+          const isSelected = onboardingData.timeCommitment === option.id;
           return (
             <div key={option.id} className="relative">
               <RadioGroupItem
                 value={option.id}
                 id={option.id}
-                className="absolute top-4 left-4 peer sr-only"
+                className="sr-only"
               />
-              <Label
-                htmlFor={option.id}
-                className="peer-data-[state=checked]:border-primary peer-data-[state=checked]:ring-1 peer-data-[state=checked]:ring-primary"
-              >
-                <Card className="cursor-pointer p-6 border hover:border-primary hover:shadow-md transition-all flex items-center gap-4">
-                  <div className="bg-primary/10 p-2 rounded-full">
-                    <Icon className="w-5 h-5 text-primary" />
+              <Label htmlFor={option.id} className="cursor-pointer">
+                <Card className={`p-6 border-2 transition-all hover:border-primary hover:shadow-md flex items-center gap-4 ${
+                  isSelected 
+                    ? 'border-primary bg-primary/5 shadow-md ring-2 ring-primary/20' 
+                    : 'border-border hover:border-primary'
+                }`}>
+                  <div className={`p-2 rounded-full ${
+                    isSelected ? 'bg-primary/20' : 'bg-primary/10'
+                  }`}>
+                    <Icon className={`w-5 h-5 ${
+                      isSelected ? 'text-primary' : 'text-primary'
+                    }`} />
                   </div>
                   <div>
                     <h3 className="font-medium">{option.title}</h3>

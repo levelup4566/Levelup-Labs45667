@@ -61,21 +61,27 @@ const OnboardingGoals = () => {
       >
         {learningGoals.map((goal) => {
           const Icon = goal.icon;
+          const isSelected = onboardingData.learningGoal === goal.id;
           return (
             <div key={goal.id} className="relative">
               <RadioGroupItem
                 value={goal.id}
                 id={goal.id}
-                className="absolute top-4 left-4 peer sr-only"
+                className="sr-only"
               />
-              <Label
-                htmlFor={goal.id}
-                className="peer-data-[state=checked]:border-primary peer-data-[state=checked]:ring-1 peer-data-[state=checked]:ring-primary"
-              >
-                <Card className="cursor-pointer p-6 h-full border hover:border-primary hover:shadow-md transition-all">
+              <Label htmlFor={goal.id} className="cursor-pointer">
+                <Card className={`p-6 h-full border-2 transition-all hover:border-primary hover:shadow-md ${
+                  isSelected 
+                    ? 'border-primary bg-primary/5 shadow-md ring-2 ring-primary/20' 
+                    : 'border-border hover:border-primary'
+                }`}>
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 p-2 rounded-full">
-                      <Icon className="w-5 h-5 text-primary" />
+                    <div className={`p-2 rounded-full ${
+                      isSelected ? 'bg-primary/20' : 'bg-primary/10'
+                    }`}>
+                      <Icon className={`w-5 h-5 ${
+                        isSelected ? 'text-primary' : 'text-primary'
+                      }`} />
                     </div>
                     <div>
                       <h3 className="font-medium">{goal.title}</h3>
