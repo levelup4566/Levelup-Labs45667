@@ -54,19 +54,22 @@ const OnboardingLayout = () => {
     setOnboardingData(prev => ({ ...prev, [key]: value }));
   };
   
+  const generateCourseRoute = (learningGoal: string, timeCommitment: string, experienceLevel: string) => {
+    return `/courses/${learningGoal}/${timeCommitment}/${experienceLevel}`;
+  };
+  
   const goToNextStep = () => {
     if (!canContinue) return;
     
     if (isLastStep) {
-      // If this is the last step, finish onboarding and navigate to course dashboard
+      // If this is the last step, finish onboarding and navigate to specific course path
+      const { learningGoal, timeCommitment, experienceLevel } = onboardingData;
+      const coursePath = generateCourseRoute(learningGoal, timeCommitment, experienceLevel);
+      
       console.log('Onboarding complete with data:', onboardingData);
-      navigate('/course-dashboard', { 
-        state: { 
-          learningGoal: onboardingData.learningGoal,
-          timeCommitment: onboardingData.timeCommitment,
-          experienceLevel: onboardingData.experienceLevel
-        } 
-      });
+      console.log('Navigating to course path:', coursePath);
+      
+      navigate(coursePath);
       return;
     }
     

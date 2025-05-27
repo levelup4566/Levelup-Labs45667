@@ -2,6 +2,9 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BarChart3, BookOpen, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import OverviewCards from './OverviewCards';
 import CoursesList from './CoursesList';
 import SkillsCard from './SkillsCard';
@@ -38,7 +41,88 @@ const DashboardTabs = ({ courses, skills, achievements }: DashboardTabsProps) =>
       </TabsContent>
       
       <TabsContent value="courses">
-        <CoursesList courses={courses} detailed={true} />
+        <div className="space-y-6">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold mb-2">Choose Your Learning Path</h2>
+            <p className="text-muted-foreground">Start your personalized learning journey by selecting a course</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-4 h-4 text-blue-600" />
+                  </div>
+                  Web Development
+                </CardTitle>
+                <CardDescription>
+                  Learn HTML, CSS, JavaScript, and modern frameworks
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm text-muted-foreground">• Frontend Development</p>
+                  <p className="text-sm text-muted-foreground">• React & Modern JS</p>
+                  <p className="text-sm text-muted-foreground">• Responsive Design</p>
+                </div>
+                <Link to="/onboarding">
+                  <Button className="w-full">Start Learning</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Zap className="w-4 h-4 text-purple-600" />
+                  </div>
+                  UI/UX Design
+                </CardTitle>
+                <CardDescription>
+                  Master design principles and user experience
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm text-muted-foreground">• Design Fundamentals</p>
+                  <p className="text-sm text-muted-foreground">• User Research</p>
+                  <p className="text-sm text-muted-foreground">• Prototyping</p>
+                </div>
+                <Link to="/onboarding">
+                  <Button className="w-full">Start Learning</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="w-4 h-4 text-green-600" />
+                  </div>
+                  Data Science
+                </CardTitle>
+                <CardDescription>
+                  Analyze data and build machine learning models
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm text-muted-foreground">• Python & Statistics</p>
+                  <p className="text-sm text-muted-foreground">• Machine Learning</p>
+                  <p className="text-sm text-muted-foreground">• Data Visualization</p>
+                </div>
+                <Link to="/onboarding">
+                  <Button className="w-full">Start Learning</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <CoursesList courses={courses} detailed={true} />
+        </div>
       </TabsContent>
       
       <TabsContent value="skills">
