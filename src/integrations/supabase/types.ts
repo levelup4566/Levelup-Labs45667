@@ -9,13 +9,404 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      achievements: {
+        Row: {
+          achievement_type: string | null
+          created_at: string | null
+          description: string | null
+          icon_name: string | null
+          id: string
+          name: string
+          points_required: number | null
+        }
+        Insert: {
+          achievement_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          name: string
+          points_required?: number | null
+        }
+        Update: {
+          achievement_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon_name?: string | null
+          id?: string
+          name?: string
+          points_required?: number | null
+        }
+        Relationships: []
+      }
+      course_modules: {
+        Row: {
+          course_id: string | null
+          created_at: string | null
+          id: string
+          module_order: number
+          subtitle: string | null
+          title: string
+          total_videos: number | null
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string | null
+          id?: string
+          module_order: number
+          subtitle?: string | null
+          title: string
+          total_videos?: number | null
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string | null
+          id?: string
+          module_order?: number
+          subtitle?: string | null
+          title?: string
+          total_videos?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_modules_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          difficulty_level: string
+          estimated_duration_hours: number | null
+          id: string
+          title: string
+          total_modules: number | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          difficulty_level: string
+          estimated_duration_hours?: number | null
+          id?: string
+          title: string
+          total_modules?: number | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string
+          estimated_duration_hours?: number | null
+          id?: string
+          title?: string
+          total_modules?: number | null
+        }
+        Relationships: []
+      }
+      learning_streaks: {
+        Row: {
+          clerk_user_id: string
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          last_activity_date: string | null
+          longest_streak: number | null
+          streak_start_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          clerk_user_id: string
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
+          streak_start_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          clerk_user_id?: string
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
+          streak_start_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      resources: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          difficulty: string
+          id: string
+          rating: number | null
+          resource_type: string | null
+          tags: string[] | null
+          title: string
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          difficulty: string
+          id?: string
+          rating?: number | null
+          resource_type?: string | null
+          tags?: string[] | null
+          title: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          difficulty?: string
+          id?: string
+          rating?: number | null
+          resource_type?: string | null
+          tags?: string[] | null
+          title?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string | null
+          clerk_user_id: string
+          earned_at: string | null
+          id: string
+        }
+        Insert: {
+          achievement_id?: string | null
+          clerk_user_id: string
+          earned_at?: string | null
+          id?: string
+        }
+        Update: {
+          achievement_id?: string | null
+          clerk_user_id?: string
+          earned_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_bookmarks: {
+        Row: {
+          clerk_user_id: string
+          created_at: string | null
+          id: string
+          resource_id: string | null
+        }
+        Insert: {
+          clerk_user_id: string
+          created_at?: string | null
+          id?: string
+          resource_id?: string | null
+        }
+        Update: {
+          clerk_user_id?: string
+          created_at?: string | null
+          id?: string
+          resource_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_bookmarks_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          clerk_user_id: string
+          created_at: string | null
+          experience_level: string | null
+          id: string
+          learning_goal: string | null
+          time_commitment: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          clerk_user_id: string
+          created_at?: string | null
+          experience_level?: string | null
+          id?: string
+          learning_goal?: string | null
+          time_commitment?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          clerk_user_id?: string
+          created_at?: string | null
+          experience_level?: string | null
+          id?: string
+          learning_goal?: string | null
+          time_commitment?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          clerk_user_id: string
+          completed: boolean | null
+          completed_at: string | null
+          course_id: string | null
+          created_at: string | null
+          id: string
+          module_id: string | null
+          time_spent_minutes: number | null
+          video_id: string | null
+        }
+        Insert: {
+          clerk_user_id: string
+          completed?: boolean | null
+          completed_at?: string | null
+          course_id?: string | null
+          created_at?: string | null
+          id?: string
+          module_id?: string | null
+          time_spent_minutes?: number | null
+          video_id?: string | null
+        }
+        Update: {
+          clerk_user_id?: string
+          completed?: boolean | null
+          completed_at?: string | null
+          course_id?: string | null
+          created_at?: string | null
+          id?: string
+          module_id?: string | null
+          time_spent_minutes?: number | null
+          video_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_progress_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_progress_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_resource_ratings: {
+        Row: {
+          clerk_user_id: string
+          created_at: string | null
+          id: string
+          rating: number | null
+          resource_id: string | null
+        }
+        Insert: {
+          clerk_user_id: string
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          resource_id?: string | null
+        }
+        Update: {
+          clerk_user_id?: string
+          created_at?: string | null
+          id?: string
+          rating?: number | null
+          resource_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_resource_ratings_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      videos: {
+        Row: {
+          created_at: string | null
+          duration: string | null
+          id: string
+          module_id: string | null
+          title: string
+          video_order: number
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          module_id?: string | null
+          title: string
+          video_order: number
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          module_id?: string | null
+          title?: string
+          video_order?: number
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_learning_streak: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
