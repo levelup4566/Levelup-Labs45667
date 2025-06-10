@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
@@ -395,5 +396,3 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
 };
 
 export default WebDevCourse;
-
-}

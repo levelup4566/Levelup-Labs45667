@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
@@ -349,5 +350,3 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
 };
 
 export default DataScienceCourse;
-
-</edits_to_apply>
