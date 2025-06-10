@@ -1,14 +1,22 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Users, Star, Sparkles, Rocket, CheckCircle, X, BriefcaseBusiness, DollarSign, UserPlus, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { useAuth } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const { isSignedIn } = useAuth();
+  const navigate = useNavigate();
+
   const handleJoinWaitlist = () => {
     // TODO: Implement waitlist signup logic
     console.log('Joining waitlist');
+  };
+
+  const handleDashboardNavigation = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -30,14 +38,25 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in px-4 sm:px-0" style={{ animationDelay: "0.3s" }}>
-            <Button 
-              onClick={handleJoinWaitlist} 
-              size="lg" 
-              className="w-full sm:w-auto group transition-all bg-green-600 hover:bg-green-700 text-base sm:text-lg px-6 py-3"
-            >
-              Join the Waitlist 
-              <UserPlus className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
-            </Button>
+            {isSignedIn ? (
+              <Button 
+                onClick={handleDashboardNavigation} 
+                size="lg" 
+                className="w-full sm:w-auto group transition-all bg-green-600 hover:bg-green-700 text-base sm:text-lg px-6 py-3"
+              >
+                Your Learning Dashboard 
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleJoinWaitlist} 
+                size="lg" 
+                className="w-full sm:w-auto group transition-all bg-green-600 hover:bg-green-700 text-base sm:text-lg px-6 py-3"
+              >
+                Join the Waitlist 
+                <UserPlus className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
+              </Button>
+            )}
           </div>
         </div>
         
