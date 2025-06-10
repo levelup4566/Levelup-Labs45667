@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
 import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
+import SkillPoints from '@/components/course/SkillPoints';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -161,9 +161,17 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
   const [completedVideos, setCompletedVideos] = useState<string[]>([]);
+  const [completedProjects, setCompletedProjects] = useState<string[]>([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState<number>(0);
   
   const modules = getWebDevModules(timeCommitment, experienceLevel);
+  
+  // Calculate total videos for skill points
+  const totalVideos = modules.reduce((total, module) => {
+    return total + module.subModules.reduce((subTotal, subModule) => {
+      return subTotal + subModule.videos.length;
+    }, 0);
+  }, 0);
   
   const calculateOverallProgress = () => {
     if (!modules || modules.length === 0) return 0;
@@ -281,6 +289,13 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
         <div className="container px-4 max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
+              <SkillPoints 
+                completedVideos={completedVideos}
+                completedProjects={completedProjects}
+                totalVideos={totalVideos}
+                totalProjects={1}
+              />
+              
               <div className="bg-card rounded-lg border shadow-sm p-4 mb-4 sticky top-24">
                 <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-primary" />
@@ -301,7 +316,18 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
                 </div>
                 
                 <div className="mt-6 pt-4 border-t">
-                  <Button className="w-full gap-2">
+                  <Button 
+                    className="w-full gap-2"
+                    onClick={() => {
+                      if (!completedProjects.includes('certification')) {
+                        setCompletedProjects(prev => [...prev, 'certification']);
+                        toast({
+                          title: "Project completed!",
+                          description: "You earned 5 skill points for completing the certification exam!",
+                        });
+                      }
+                    }}
+                  >
                     Certification Exam
                     <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -369,3 +395,5 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
 };
 
 export default WebDevCourse;
+
+}
