@@ -32,21 +32,29 @@ export const useCourseProgress = () => {
       try {
         setLoading(true);
 
-        // Fetch course enrollments/progress
-        const { data: courses } = await supabase
+        // Fetch course enrollments/progress from the new table
+        const { data: courses, error: coursesError } = await supabase
           .from('user_course_enrollments')
           .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite')
           .eq('clerk_user_id', user.id);
 
-        if (courses) setCourseProgress(courses);
+        if (coursesError) {
+          console.error('Error fetching course progress:', coursesError);
+        } else if (courses) {
+          setCourseProgress(courses);
+        }
 
         // Fetch video progress
-        const { data: videos } = await supabase
+        const { data: videos, error: videosError } = await supabase
           .from('user_progress')
           .select('video_id, completed, completed_at, time_spent_minutes')
           .eq('clerk_user_id', user.id);
 
-        if (videos) setVideoProgress(videos);
+        if (videosError) {
+          console.error('Error fetching video progress:', videosError);
+        } else if (videos) {
+          setVideoProgress(videos);
+        }
 
       } catch (error) {
         console.error('Error fetching progress:', error);
@@ -62,7 +70,7 @@ export const useCourseProgress = () => {
     if (!user) return;
 
     try {
-      await supabase
+      const { error } = await supabase
         .from('user_course_enrollments')
         .insert({
           clerk_user_id: user.id,
@@ -70,6 +78,11 @@ export const useCourseProgress = () => {
           started_at: new Date().toISOString(),
           last_accessed_at: new Date().toISOString()
         });
+
+      if (error) {
+        console.error('Error enrolling in course:', error);
+        return;
+      }
 
       // Refresh course progress
       const { data: courses } = await supabase
@@ -88,7 +101,7 @@ export const useCourseProgress = () => {
 
     try {
       // Insert or update video progress
-      await supabase
+      const { error } = await supabase
         .from('user_progress')
         .upsert({
           clerk_user_id: user.id,
@@ -99,6 +112,11 @@ export const useCourseProgress = () => {
           completed_at: new Date().toISOString(),
           time_spent_minutes: 0 // This could be tracked more accurately
         });
+
+      if (error) {
+        console.error('Error marking video complete:', error);
+        return;
+      }
 
       // Update video progress state
       setVideoProgress(prev => {
@@ -119,7 +137,7 @@ export const useCourseProgress = () => {
         }
       });
 
-      // Award points for video completion
+      // Award points for video completion using the database function
       await supabase.rpc('award_points', {
         user_id: user.id,
         points: 5,
@@ -135,7 +153,7 @@ export const useCourseProgress = () => {
     if (!user) return;
 
     try {
-      await supabase
+      const { error } = await supabase
         .from('user_course_enrollments')
         .update({
           progress_percentage: progressPercentage,
@@ -143,6 +161,11 @@ export const useCourseProgress = () => {
         })
         .eq('clerk_user_id', user.id)
         .eq('course_id', courseId);
+
+      if (error) {
+        console.error('Error updating course progress:', error);
+        return;
+      }
 
       // Update local state
       setCourseProgress(prev => 

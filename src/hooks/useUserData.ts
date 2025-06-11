@@ -56,39 +56,55 @@ export const useUserData = () => {
         });
 
         // Fetch user stats
-        const { data: stats } = await supabase
+        const { data: stats, error: statsError } = await supabase
           .from('user_stats')
           .select('*')
           .eq('clerk_user_id', user.id)
           .single();
 
-        if (stats) setUserStats(stats);
+        if (statsError) {
+          console.error('Error fetching user stats:', statsError);
+        } else if (stats) {
+          setUserStats(stats);
+        }
 
         // Fetch user profile
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('user_profiles')
           .select('learning_goal, experience_level, time_commitment')
           .eq('clerk_user_id', user.id)
           .single();
 
-        if (profile) setUserProfile(profile);
+        if (profileError) {
+          console.error('Error fetching user profile:', profileError);
+        } else if (profile) {
+          setUserProfile(profile);
+        }
 
         // Fetch user skills
-        const { data: skills } = await supabase
+        const { data: skills, error: skillsError } = await supabase
           .from('user_skills')
           .select('skill_name, skill_level, skill_points')
           .eq('clerk_user_id', user.id);
 
-        if (skills) setUserSkills(skills);
+        if (skillsError) {
+          console.error('Error fetching user skills:', skillsError);
+        } else if (skills) {
+          setUserSkills(skills);
+        }
 
         // Fetch user badges
-        const { data: badges } = await supabase
+        const { data: badges, error: badgesError } = await supabase
           .from('user_badges')
           .select('badge_name, badge_description, badge_icon, badge_color, earned_at')
           .eq('clerk_user_id', user.id)
           .order('earned_at', { ascending: false });
 
-        if (badges) setUserBadges(badges);
+        if (badgesError) {
+          console.error('Error fetching user badges:', badgesError);
+        } else if (badges) {
+          setUserBadges(badges);
+        }
 
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -127,10 +143,15 @@ export const useUserData = () => {
     if (!user) return;
 
     try {
-      await supabase
+      const { error } = await supabase
         .from('user_profiles')
         .update(profileData)
         .eq('clerk_user_id', user.id);
+
+      if (error) {
+        console.error('Error updating profile:', error);
+        return;
+      }
 
       setUserProfile(prev => prev ? { ...prev, ...profileData } : null);
     } catch (error) {

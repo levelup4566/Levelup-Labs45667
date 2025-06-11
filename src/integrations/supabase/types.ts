@@ -211,6 +211,36 @@ export type Database = {
           },
         ]
       }
+      user_badges: {
+        Row: {
+          badge_color: string | null
+          badge_description: string | null
+          badge_icon: string | null
+          badge_name: string
+          clerk_user_id: string
+          earned_at: string | null
+          id: string
+        }
+        Insert: {
+          badge_color?: string | null
+          badge_description?: string | null
+          badge_icon?: string | null
+          badge_name: string
+          clerk_user_id: string
+          earned_at?: string | null
+          id?: string
+        }
+        Update: {
+          badge_color?: string | null
+          badge_description?: string | null
+          badge_icon?: string | null
+          badge_name?: string
+          clerk_user_id?: string
+          earned_at?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       user_bookmarks: {
         Row: {
           clerk_user_id: string
@@ -239,6 +269,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_course_enrollments: {
+        Row: {
+          clerk_user_id: string
+          completed_at: string | null
+          course_id: string
+          created_at: string | null
+          id: string
+          is_favorite: boolean | null
+          last_accessed_at: string | null
+          progress_percentage: number | null
+          started_at: string | null
+        }
+        Insert: {
+          clerk_user_id: string
+          completed_at?: string | null
+          course_id: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          last_accessed_at?: string | null
+          progress_percentage?: number | null
+          started_at?: string | null
+        }
+        Update: {
+          clerk_user_id?: string
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          is_favorite?: boolean | null
+          last_accessed_at?: string | null
+          progress_percentage?: number | null
+          started_at?: string | null
+        }
+        Relationships: []
       }
       user_profiles: {
         Row: {
@@ -360,6 +426,84 @@ export type Database = {
           },
         ]
       }
+      user_skills: {
+        Row: {
+          clerk_user_id: string
+          created_at: string | null
+          id: string
+          skill_level: number | null
+          skill_name: string
+          skill_points: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          clerk_user_id: string
+          created_at?: string | null
+          id?: string
+          skill_level?: number | null
+          skill_name: string
+          skill_points?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          clerk_user_id?: string
+          created_at?: string | null
+          id?: string
+          skill_level?: number | null
+          skill_name?: string
+          skill_points?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          clerk_user_id: string
+          courses_completed: number | null
+          created_at: string | null
+          current_level: number | null
+          experience_points: number | null
+          id: string
+          is_new_user: boolean | null
+          login_streak_days: number | null
+          points_to_next_level: number | null
+          total_skill_points: number | null
+          total_study_time_minutes: number | null
+          updated_at: string | null
+          videos_watched: number | null
+        }
+        Insert: {
+          clerk_user_id: string
+          courses_completed?: number | null
+          created_at?: string | null
+          current_level?: number | null
+          experience_points?: number | null
+          id?: string
+          is_new_user?: boolean | null
+          login_streak_days?: number | null
+          points_to_next_level?: number | null
+          total_skill_points?: number | null
+          total_study_time_minutes?: number | null
+          updated_at?: string | null
+          videos_watched?: number | null
+        }
+        Update: {
+          clerk_user_id?: string
+          courses_completed?: number | null
+          created_at?: string | null
+          current_level?: number | null
+          experience_points?: number | null
+          id?: string
+          is_new_user?: boolean | null
+          login_streak_days?: number | null
+          points_to_next_level?: number | null
+          total_skill_points?: number | null
+          total_study_time_minutes?: number | null
+          updated_at?: string | null
+          videos_watched?: number | null
+        }
+        Relationships: []
+      }
       videos: {
         Row: {
           created_at: string | null
@@ -403,6 +547,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      award_points: {
+        Args: { user_id: string; points: number; activity_desc?: string }
+        Returns: undefined
+      }
+      complete_onboarding: {
+        Args: {
+          user_id: string
+          learning_goal: string
+          experience_level: string
+          time_commitment: string
+        }
+        Returns: undefined
+      }
+      initialize_new_user: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
       update_learning_streak: {
         Args: { user_id: string }
         Returns: undefined
