@@ -574,4 +574,4 @@ const CourseDashboard = () => {
 
 export default CourseDashboard;
 
-</edits_to_apply>
+}
