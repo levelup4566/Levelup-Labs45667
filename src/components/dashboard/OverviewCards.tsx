@@ -3,6 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import ProgressCircle from '@/components/ui/ProgressCircle';
 import { TrendingUp, Clock, Award, CheckCircle2 } from 'lucide-react';
+import { useUserData } from '@/hooks/useUserData';
+import { useLearningStreak } from '@/hooks/useLearningStreak';
 
 type Achievement = {
   name: string;
@@ -15,6 +17,11 @@ interface OverviewCardsProps {
 }
 
 const OverviewCards = ({ achievements }: OverviewCardsProps) => {
+  const { userStats } = useUserData();
+  const { streak } = useLearningStreak();
+
+  const overallProgress = userStats ? Math.min((userStats.experience_points / 100) * 10, 100) : 0;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Overall Progress Card */}
@@ -25,10 +32,10 @@ const OverviewCards = ({ achievements }: OverviewCardsProps) => {
             <TrendingUp className="h-5 w-5 text-blue-500" />
             Overall Progress
           </CardTitle>
-          <CardDescription>Your learning journey</CardDescription>
+          <CardDescription>Level {userStats?.current_level || 1} - {userStats?.total_skill_points || 0} points</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center pt-4">
-          <ProgressCircle value={42} size={160} animate={true} />
+          <ProgressCircle value={overallProgress} size={160} animate={true} />
         </CardContent>
       </Card>
       
@@ -48,16 +55,16 @@ const OverviewCards = ({ achievements }: OverviewCardsProps) => {
               <Clock className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <div className="text-2xl font-bold">7 days</div>
+              <div className="text-2xl font-bold">{streak?.current_streak || 0} days</div>
               <div className="text-muted-foreground text-sm">Current streak</div>
             </div>
           </div>
           <div className="grid grid-cols-7 gap-1">
-            {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+            {Array.from({ length: 7 }, (_, i) => i + 1).map((day) => (
               <div 
                 key={day} 
                 className={`aspect-square rounded-md flex items-center justify-center text-xs font-medium ${
-                  day <= 5 ? 'bg-green-100 text-green-600' : 'bg-secondary text-muted-foreground'
+                  day <= (streak?.current_streak || 0) ? 'bg-green-100 text-green-600' : 'bg-secondary text-muted-foreground'
                 }`}
               >
                 {day}
@@ -79,7 +86,7 @@ const OverviewCards = ({ achievements }: OverviewCardsProps) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {achievements.map((achievement, i) => (
+            {achievements.length > 0 ? achievements.map((achievement, i) => (
               <div key={i} className="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-secondary/50">
                 <div className="bg-secondary p-2 rounded-full">
                   {achievement.icon}
@@ -90,7 +97,13 @@ const OverviewCards = ({ achievements }: OverviewCardsProps) => {
                 </div>
                 <CheckCircle2 className="h-4 w-4 text-green-500" />
               </div>
-            ))}
+            )) : (
+              <div className="text-center py-4 text-muted-foreground">
+                <Award className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No achievements yet</p>
+                <p className="text-xs">Complete lessons to earn your first badge!</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

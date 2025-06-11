@@ -1,12 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
 import RouterHeader from '@/components/layout/RouterHeader';
 import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
 import SkillPoints from '@/components/course/SkillPoints';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useUserData } from '@/hooks/useUserData';
+import { useCourseProgress } from '@/hooks/useCourseProgress';
+import { useLearningStreak } from '@/hooks/useLearningStreak';
 import { 
   ChevronLeft, 
   PlayCircle, 
@@ -20,15 +23,7 @@ import {
   Check 
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Card,
-  CardContent
-} from '@/components/ui/card';
-import { 
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '@/components/ui/collapsible';
+import { Card, CardContent } from '@/components/ui/card';
 
 const getCourseModules = (learningGoal: string) => {
   switch (learningGoal) {
@@ -217,6 +212,10 @@ const CourseDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useUser();
+  const { awardPoints } = useUserData();
+  const { markVideoComplete, enrollInCourse, getCompletedVideos, isVideoCompleted } = useCourseProgress();
+  const { updateStreak } = useLearningStreak();
   
   const [learningGoal, setLearningGoal] = useState<string>('');
   const [experienceLevel, setExperienceLevel] = useState<string>('');
@@ -237,11 +236,10 @@ const CourseDashboard = () => {
   
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
-  const [completedVideos, setCompletedVideos] = useState<string[]>([]);
-  const [completedProjects, setCompletedProjects] = useState<string[]>([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState<number>(0);
   
   const modules = getCourseModules(learningGoal);
+  const completedVideos = getCompletedVideos();
   
   // Calculate total videos for skill points
   const totalVideos = modules.reduce((total, module) => {
@@ -268,6 +266,22 @@ const CourseDashboard = () => {
   useEffect(() => {
     setOverallProgress(calculateOverallProgress());
   }, [completedVideos]);
+
+  // Enroll in course when component mounts
+  useEffect(() => {
+    if (user && learningGoal) {
+      const courseIdMap: { [key: string]: string } = {
+        'coding': '1',
+        'design': '2',
+        'data': '3'
+      };
+      
+      const courseId = courseIdMap[learningGoal];
+      if (courseId) {
+        enrollInCourse(courseId);
+      }
+    }
+  }, [user, learningGoal, enrollInCourse]);
   
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);
@@ -283,22 +297,39 @@ const CourseDashboard = () => {
     }
   };
   
-  const handleToggleComplete = (videoId: string) => {
-    setCompletedVideos(prev => {
-      if (prev.includes(videoId)) {
-        return prev.filter(id => id !== videoId);
-      } else {
-        return [...prev, videoId];
-      }
-    });
+  const handleToggleComplete = async (videoId: string) => {
+    if (!user) return;
+
+    const isCompleted = isVideoCompleted(videoId);
     
-    toast({
-      title: completedVideos.includes(videoId) ? "Lesson marked as incomplete" : "Lesson completed!",
-      description: completedVideos.includes(videoId) 
-        ? "You can revisit this lesson anytime." 
-        : "Great job! Keep up the good work.",
-      variant: completedVideos.includes(videoId) ? "default" : "default",
-    });
+    if (!isCompleted) {
+      // Find the module and course for this video
+      let courseId = '';
+      let moduleId = '';
+      
+      for (const module of modules) {
+        for (const subModule of module.subModules) {
+          if (subModule.videos.some(v => v.id === videoId)) {
+            moduleId = module.id;
+            courseId = learningGoal === 'coding' ? '1' : learningGoal === 'design' ? '2' : '3';
+            break;
+          }
+        }
+      }
+
+      await markVideoComplete(videoId, courseId, moduleId);
+      await updateStreak();
+      
+      toast({
+        title: "Lesson completed!",
+        description: "Great job! You earned 5 skill points.",
+      });
+    } else {
+      toast({
+        title: "Lesson marked as incomplete",
+        description: "You can revisit this lesson anytime.",
+      });
+    }
   };
   
   const getCourseTitleByGoal = (goal: string) => {
@@ -425,7 +456,7 @@ const CourseDashboard = () => {
             <div className="lg:col-span-1">
               <SkillPoints 
                 completedVideos={completedVideos}
-                completedProjects={completedProjects}
+                completedProjects={[]}
                 totalVideos={totalVideos}
                 totalProjects={1}
               />
@@ -452,12 +483,12 @@ const CourseDashboard = () => {
                 <div className="mt-6 pt-4 border-t">
                   <Button 
                     className="w-full gap-2"
-                    onClick={() => {
-                      if (!completedProjects.includes('certification')) {
-                        setCompletedProjects(prev => [...prev, 'certification']);
+                    onClick={async () => {
+                      if (user) {
+                        await awardPoints(20, 'Completed certification exam');
                         toast({
-                          title: "Project completed!",
-                          description: "You earned 5 skill points for completing the certification exam!",
+                          title: "Certification completed!",
+                          description: "You earned 20 skill points for completing the certification exam!",
                         });
                       }
                     }}
@@ -542,3 +573,5 @@ const CourseDashboard = () => {
 };
 
 export default CourseDashboard;
+
+</edits_to_apply>

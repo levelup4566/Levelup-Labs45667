@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import SkillBadge from '@/components/ui/SkillBadge';
 import { Zap, User } from 'lucide-react';
+import { useUserData } from '@/hooks/useUserData';
 
 type Skill = {
   name: string;
@@ -14,6 +15,23 @@ interface SkillsCardProps {
 }
 
 const SkillsCard = ({ skills }: SkillsCardProps) => {
+  const { userStats } = useUserData();
+  
+  // Show user's actual skills from database, or default skills if none
+  const displaySkills = skills.length > 0 ? skills : [
+    { name: "HTML", level: 1 },
+    { name: "CSS", level: 1 },
+    { name: "JavaScript", level: 1 },
+    { name: "React", level: 1 },
+  ];
+
+  const recommendedSkills = [
+    { name: "Node.js", level: 0 },
+    { name: "TypeScript", level: 0 },
+    { name: "Git", level: 0 },
+    { name: "Python", level: 0 }
+  ];
+
   return (
     <Card className="overflow-hidden border-none shadow-md">
       <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
@@ -23,12 +41,12 @@ const SkillsCard = ({ skills }: SkillsCardProps) => {
           Your Skills
         </CardTitle>
         <CardDescription>
-          Skills you've developed through completed courses
+          Skills you've developed through completed courses - Level {userStats?.current_level || 1}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {skills.map((skill, index) => (
+          {displaySkills.map((skill, index) => (
             <SkillBadge
               key={index}
               name={skill.name}
@@ -42,9 +60,13 @@ const SkillsCard = ({ skills }: SkillsCardProps) => {
             Recommended skills to develop
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <SkillBadge name="Node.js" level={0} />
-            <SkillBadge name="TypeScript" level={0} />
-            <SkillBadge name="Git" level={0} />
+            {recommendedSkills.map((skill, index) => (
+              <SkillBadge 
+                key={index} 
+                name={skill.name} 
+                level={skill.level} 
+              />
+            ))}
           </div>
         </div>
       </CardContent>
