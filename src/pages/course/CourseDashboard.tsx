@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
@@ -573,5 +574,3 @@ const CourseDashboard = () => {
 };
 
 export default CourseDashboard;
-
-}
