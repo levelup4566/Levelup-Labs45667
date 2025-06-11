@@ -214,26 +214,43 @@ const CourseDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
-  const { awardPoints } = useUserData();
-  const { markVideoComplete, enrollInCourse, getCompletedVideos, isVideoCompleted } = useCourseProgress();
+  const { awardPoints, userProfile } = useUserData();
+  const { markVideoComplete, enrollInCourse, getCompletedVideos, isVideoCompleted, courseProgress } = useCourseProgress();
   const { updateStreak } = useLearningStreak();
   
   const [learningGoal, setLearningGoal] = useState<string>('');
   const [experienceLevel, setExperienceLevel] = useState<string>('');
   
   useEffect(() => {
-    if (location.state) {
-      setLearningGoal(location.state.learningGoal || 'coding');
+    // First try to get from location state (direct navigation)
+    if (location.state?.learningGoal) {
+      setLearningGoal(location.state.learningGoal);
       setExperienceLevel(location.state.experienceLevel || 'beginner');
-    } else {
-      toast({
-        title: "Missing learning preferences",
-        description: "Please complete the onboarding process first.",
-        variant: "destructive",
-      });
-      navigate('/onboarding');
     }
-  }, [location.state, navigate, toast]);
+    // Then try to get from user profile (returning user)
+    else if (userProfile?.learning_goal) {
+      setLearningGoal(userProfile.learning_goal);
+      setExperienceLevel(userProfile.experience_level || 'beginner');
+    }
+    // If neither available and user exists, try to extract from URL params
+    else if (user) {
+      const pathParts = window.location.pathname.split('/');
+      if (pathParts.length >= 3 && pathParts[1] === 'courses') {
+        setLearningGoal(pathParts[2]); // courses/design/minimal/beginner -> 'design'
+        setExperienceLevel(pathParts[4] || 'beginner');
+      } else {
+        // Only redirect to onboarding if user has no profile and no state
+        if (!userProfile?.learning_goal) {
+          toast({
+            title: "Missing learning preferences",
+            description: "Please complete the onboarding process first.",
+            variant: "destructive",
+          });
+          navigate('/onboarding');
+        }
+      }
+    }
+  }, [location.state, userProfile, user, navigate, toast]);
   
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
@@ -266,7 +283,7 @@ const CourseDashboard = () => {
   
   useEffect(() => {
     setOverallProgress(calculateOverallProgress());
-  }, [completedVideos]);
+  }, [completedVideos, modules]);
 
   // Enroll in course when component mounts
   useEffect(() => {

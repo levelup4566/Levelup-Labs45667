@@ -31,11 +31,13 @@ const Dashboard = () => {
   // Convert database data to component format
   const courses = courseProgress.map(progress => ({
     id: parseInt(progress.course_id) || 1,
+    courseId: progress.course_id,
     title: getCourseTitle(progress.course_id),
     progress: progress.progress_percentage,
-    totalModules: 12, // This could be fetched from courses table
-    completedModules: Math.floor((progress.progress_percentage / 100) * 12),
-    lastAccessed: formatLastAccessed(progress.last_accessed_at)
+    totalModules: getTotalModulesForCourse(progress.course_id),
+    completedModules: Math.floor((progress.progress_percentage / 100) * getTotalModulesForCourse(progress.course_id)),
+    lastAccessed: formatLastAccessed(progress.last_accessed_at),
+    learningGoal: getCourseGoal(progress.course_id)
   }));
 
   const skills = userSkills.map(skill => ({
@@ -69,6 +71,24 @@ const getCourseTitle = (courseId: string) => {
     '3': 'Data Science and Analysis'
   };
   return titleMap[courseId] || 'Unknown Course';
+};
+
+const getCourseGoal = (courseId: string) => {
+  const goalMap: { [key: string]: string } = {
+    '1': 'coding',
+    '2': 'design', 
+    '3': 'data'
+  };
+  return goalMap[courseId] || 'coding';
+};
+
+const getTotalModulesForCourse = (courseId: string) => {
+  const moduleMap: { [key: string]: number } = {
+    '1': 2, // Web dev has 2 modules
+    '2': 1, // Design has 1 module
+    '3': 1  // Data has 1 module
+  };
+  return moduleMap[courseId] || 1;
 };
 
 const formatLastAccessed = (dateString: string | null) => {

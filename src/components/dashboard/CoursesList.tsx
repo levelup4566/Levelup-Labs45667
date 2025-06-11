@@ -1,16 +1,21 @@
+
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { BookOpen, Clock, CheckCircle2, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Clock, CheckCircle2, Zap, Play } from 'lucide-react';
 import ProgressCircle from '@/components/ui/ProgressCircle';
 
 type Course = {
   id: number;
+  courseId?: string;
   title: string;
   progress: number;
   totalModules: number;
   completedModules: number;
   lastAccessed: string;
+  learningGoal?: string;
 };
 
 interface CoursesListProps {
@@ -19,6 +24,20 @@ interface CoursesListProps {
 }
 
 const CoursesList = ({ courses, detailed = false }: CoursesListProps) => {
+  const navigate = useNavigate();
+
+  const handleContinueCourse = (course: Course) => {
+    if (course.courseId && course.learningGoal) {
+      // Navigate back to the course dashboard with the learning goal
+      navigate('/course-dashboard', {
+        state: {
+          learningGoal: course.learningGoal,
+          experienceLevel: 'beginner' // You might want to store this in the database
+        }
+      });
+    }
+  };
+
   if (detailed) {
     return (
       <div className="grid gap-6">
@@ -53,10 +72,15 @@ const CoursesList = ({ courses, detailed = false }: CoursesListProps) => {
                   <Clock className="h-3.5 w-3.5" />
                   {course.lastAccessed}
                 </span>
-                <button className="flex items-center gap-1 text-primary hover:text-primary/80 hover:underline font-medium transition-colors">
+                <Button 
+                  variant="default"
+                  size="sm"
+                  onClick={() => handleContinueCourse(course)}
+                  className="flex items-center gap-1"
+                >
+                  <Play className="h-3.5 w-3.5" />
                   Continue Learning
-                  <Zap className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -77,25 +101,38 @@ const CoursesList = ({ courses, detailed = false }: CoursesListProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {courses.map((course) => (
-            <div key={course.id} className="p-3 rounded-xl hover:bg-secondary/50 transition-colors duration-200">
-              <div className="flex justify-between items-center">
-                <h3 className="font-medium">{course.title}</h3>
-                <span className="text-sm font-semibold text-primary">{course.progress}%</span>
-              </div>
-              <Progress value={course.progress} className="h-2 mt-2 bg-secondary" />
-              <div className="flex justify-between items-center text-sm text-muted-foreground mt-2">
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  {course.completedModules} of {course.totalModules} modules
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5" />
-                  {course.lastAccessed}
-                </span>
-              </div>
+          {courses.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">No courses in progress yet</p>
+              <Button onClick={() => navigate('/onboarding')}>
+                Start Your First Course
+              </Button>
             </div>
-          ))}
+          ) : (
+            courses.map((course) => (
+              <div key={course.id} className="p-3 rounded-xl hover:bg-secondary/50 transition-colors duration-200">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-medium">{course.title}</h3>
+                  <span className="text-sm font-semibold text-primary">{course.progress}%</span>
+                </div>
+                <Progress value={course.progress} className="h-2 mt-2 bg-secondary" />
+                <div className="flex justify-between items-center text-sm text-muted-foreground mt-2">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    {course.completedModules} of {course.totalModules} modules
+                  </span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleContinueCourse(course)}
+                    className="h-auto p-1 text-primary hover:text-primary/80"
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </CardContent>
     </Card>

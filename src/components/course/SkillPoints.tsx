@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, Trophy, Target } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,8 +19,16 @@ const SkillPoints = ({
   totalProjects = 1 
 }: SkillPointsProps) => {
   const { userStats } = useUserData();
+  const [displayPoints, setDisplayPoints] = useState(0);
   
-  const videoPoints = completedVideos.length * 5; // Updated to match database logic
+  // Update display points when user stats change
+  useEffect(() => {
+    if (userStats?.total_skill_points !== undefined) {
+      setDisplayPoints(userStats.total_skill_points);
+    }
+  }, [userStats?.total_skill_points]);
+  
+  const videoPoints = completedVideos.length * 5;
   const projectPoints = completedProjects.length * 20;
   const totalPoints = userStats?.total_skill_points || 0;
   const currentLevel = userStats?.current_level || 1;
@@ -54,7 +62,7 @@ const SkillPoints = ({
         
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-bold text-primary">{totalPoints}</span>
+            <span className="text-2xl font-bold text-primary">{displayPoints}</span>
             <span className="text-sm text-muted-foreground">total points</span>
           </div>
           

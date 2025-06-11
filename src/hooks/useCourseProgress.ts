@@ -32,7 +32,7 @@ export const useCourseProgress = () => {
       try {
         setLoading(true);
 
-        // Fetch course enrollments/progress from the new table
+        // Fetch course enrollments/progress
         const { data: courses, error: coursesError } = await supabase
           .from('user_course_enrollments')
           .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite')
@@ -110,7 +110,7 @@ export const useCourseProgress = () => {
           module_id: moduleId,
           completed: true,
           completed_at: new Date().toISOString(),
-          time_spent_minutes: 0 // This could be tracked more accurately
+          time_spent_minutes: 0
         });
 
       if (error) {
@@ -137,28 +137,72 @@ export const useCourseProgress = () => {
         }
       });
 
-      // Award points for video completion using the database function
+      // Award points for video completion
       await supabase.rpc('award_points', {
         user_id: user.id,
         points: 5,
         activity_desc: 'Completed video lesson'
       });
 
+      // Calculate and update course progress
+      await updateCourseProgressByVideos(courseId);
+
     } catch (error) {
       console.error('Error marking video complete:', error);
     }
+  };
+
+  const updateCourseProgressByVideos = async (courseId: string) => {
+    if (!user) return;
+
+    try {
+      // Get all videos for this course (we'll need to implement this based on your course structure)
+      // For now, let's get completed videos for this course
+      const { data: completedVideos } = await supabase
+        .from('user_progress')
+        .select('video_id')
+        .eq('clerk_user_id', user.id)
+        .eq('course_id', courseId)
+        .eq('completed', true);
+
+      // This is a simplified calculation - you might want to adjust based on your actual course structure
+      const totalVideosInCourse = getTotalVideosForCourse(courseId);
+      const completedCount = completedVideos?.length || 0;
+      const progressPercentage = totalVideosInCourse > 0 ? Math.round((completedCount / totalVideosInCourse) * 100) : 0;
+
+      await updateCourseProgress(courseId, progressPercentage);
+    } catch (error) {
+      console.error('Error updating course progress:', error);
+    }
+  };
+
+  const getTotalVideosForCourse = (courseId: string) => {
+    // This should match your course structure - adjust based on actual courses
+    const courseTotalVideos: { [key: string]: number } = {
+      '1': 8, // coding course has 8 videos
+      '2': 2, // design course has 2 videos  
+      '3': 2  // data course has 2 videos
+    };
+    return courseTotalVideos[courseId] || 0;
   };
 
   const updateCourseProgress = async (courseId: string, progressPercentage: number) => {
     if (!user) return;
 
     try {
+      const updateData: any = {
+        progress_percentage: progressPercentage,
+        last_accessed_at: new Date().toISOString()
+      };
+
+      // Mark as completed if 100%
+      if (progressPercentage >= 100) {
+        updateData.completed_at = new Date().toISOString();
+      }
+
       const { error } = await supabase
         .from('user_course_enrollments')
-        .update({
-          progress_percentage: progressPercentage,
-          last_accessed_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('clerk_user_id', user.id)
         .eq('course_id', courseId);
 
@@ -171,7 +215,12 @@ export const useCourseProgress = () => {
       setCourseProgress(prev => 
         prev.map(course => 
           course.course_id === courseId 
-            ? { ...course, progress_percentage: progressPercentage, last_accessed_at: new Date().toISOString() }
+            ? { 
+                ...course, 
+                progress_percentage: progressPercentage, 
+                last_accessed_at: new Date().toISOString(),
+                completed_at: progressPercentage >= 100 ? new Date().toISOString() : course.completed_at
+              }
             : course
         )
       );
