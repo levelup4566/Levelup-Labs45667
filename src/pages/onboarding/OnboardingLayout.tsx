@@ -6,6 +6,9 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useEnsureUserProfile } from '@/hooks/useEnsureUserProfile';
+import { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/integrations/supabase/types';
 
 // Define the onboarding steps in order
 const ONBOARDING_STEPS = [
@@ -36,7 +39,12 @@ export const useOnboarding = () => {
   return context;
 };
 
-const OnboardingLayout = () => {
+type OnboardingLayoutProps = {
+  supabase: SupabaseClient<Database>;
+};
+
+const OnboardingLayout = ({ supabase }: OnboardingLayoutProps) => {
+  useEnsureUserProfile(supabase);
   const navigate = useNavigate();
   const location = useLocation();
   const [onboardingData, setOnboardingData] = useState<Record<string, any>>({});

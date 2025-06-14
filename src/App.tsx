@@ -16,7 +16,7 @@ import CourseDashboard from "./pages/course/CourseDashboard";
 import Dashboard from "./pages/Dashboard";
 import Resources from "./pages/Resources";
 import ErrorBoundary from "./components/common/ErrorBoundary";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SignInPage from "./routes/sign-in";
 import SignUpPage from "./routes/sign-up";
 
@@ -25,15 +25,22 @@ import WebDevCourse from "./pages/courses/WebDevCourse";
 import DesignCourse from "./pages/courses/DesignCourse";
 import DataScienceCourse from "./pages/courses/DataScienceCourse";
 
+import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
+import { useSupabaseAuthSync } from "@/hooks/useSupabaseAuthSync";
+import { useAuth } from "@clerk/clerk-react";
+import { useSupabaseClient } from "@/integrations/supabase/client";
+
 /**
  * App Component - Root component that sets up the application structure
- * 
+ *
  * Sets up:
  * - QueryClient for data fetching with proper error handling
  * - Global UI providers (tooltip, toast notifications)
  * - Routing with error boundaries for fault isolation
  */
 const App = () => {
+  const supabase = useSupabaseClient();
+  useEnsureUserProfile(supabase);
   // Create and configure the QueryClient with robust error handling
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
@@ -90,7 +97,7 @@ const App = () => {
               {/* Onboarding flow */}
               <Route path="/onboarding" element={
                 <ErrorBoundary>
-                  <OnboardingLayout />
+                  <OnboardingLayout supabase={supabase} />
                 </ErrorBoundary>
               }>
                 <Route index element={<OnboardingGoals />} />
