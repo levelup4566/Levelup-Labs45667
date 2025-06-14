@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useUser } from '@clerk/clerk-react';
@@ -96,7 +95,7 @@ export const useCourseProgress = () => {
         .from('user_course_enrollments')
         .insert({
           clerk_user_id: user.id,
-          course_id,
+          course_id: courseId, // FIX: Assign courseId argument to course_id column
           started_at: new Date().toISOString(),
           progress_percentage: 0,
         });
