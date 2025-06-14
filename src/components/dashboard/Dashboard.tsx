@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import DashboardHeader from './DashboardHeader';
 import DashboardTabs from './DashboardTabs';
