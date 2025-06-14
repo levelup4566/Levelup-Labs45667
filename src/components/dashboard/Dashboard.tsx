@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React from 'react';
 import { useUser } from '@clerk/clerk-react';
 import DashboardHeader from './DashboardHeader';
 import DashboardTabs from './DashboardTabs';
@@ -7,16 +8,9 @@ import { useCourseProgress } from '@/hooks/useCourseProgress';
 import { Star, Award, Calendar } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user } = require('@clerk/clerk-react').useUser();   // always fresh user info
-  const { userStats, userSkills, userBadges, loading: userLoading } = require('@/hooks/useUserData').useUserData();
-  const { courseProgress, loading: progressLoading, refetch } = require('@/hooks/useCourseProgress').useCourseProgress();
-
-  // Live check and refresh dashboard on course changes or skill changes!
-  useEffect(() => {
-    if (!userLoading && !progressLoading && user) {
-      refetch();
-    }
-  }, [user, userLoading, progressLoading]);
+  const { user } = useUser();
+  const { userStats, userSkills, userBadges, loading: userLoading } = useUserData();
+  const { courseProgress, loading: progressLoading } = useCourseProgress();
 
   if (!user || userLoading || progressLoading) {
     return (

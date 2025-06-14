@@ -1,128 +1,250 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useUser } from '@clerk/clerk-react';
 
-/**
- * Custom hook to track course progress and expose course actions.
- */
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/clerk-react';
+import { supabase } from '@/integrations/supabase/client';
+
+export interface CourseProgress {
+  course_id: string;
+  progress_percentage: number;
+  started_at: string | null;
+  completed_at: string | null;
+  last_accessed_at: string | null;
+  is_favorite: boolean;
+}
+
+export interface VideoProgress {
+  video_id: string;
+  completed: boolean;
+  completed_at: string | null;
+  time_spent_minutes: number;
+}
+
 export const useCourseProgress = () => {
   const { user } = useUser();
-  const [courseProgress, setCourseProgress] = useState<any[]>([]);
+  const [courseProgress, setCourseProgress] = useState<CourseProgress[]>([]);
+  const [videoProgress, setVideoProgress] = useState<VideoProgress[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userProgressRows, setUserProgressRows] = useState<any[]>([]);
-
-  // --- Existing fetch for overall course progress ---
-  const fetch = async () => {
-    if (!user) return;
-    setLoading(true);
-
-    // Get all course enrollments
-    const { data, error } = await supabase
-      .from('user_course_enrollments')
-      .select('*')
-      .eq('clerk_user_id', user.id)
-      .order('last_accessed_at', { ascending: false });
-
-    setCourseProgress(data || []);
-
-    // Fetch user_progress records for video completion
-    const { data: progressRows, error: progressError } = await supabase
-      .from('user_progress')
-      .select('*')
-      .eq('clerk_user_id', user.id);
-
-    setUserProgressRows(progressRows || []);
-    setLoading(false);
-  };
 
   useEffect(() => {
-    fetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!user) return;
+
+    const fetchProgress = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch course enrollments/progress
+        const { data: courses, error: coursesError } = await supabase
+          .from('user_course_enrollments')
+          .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite')
+          .eq('clerk_user_id', user.id);
+
+        if (coursesError) {
+          console.error('Error fetching course progress:', coursesError);
+        } else if (courses) {
+          setCourseProgress(courses);
+        }
+
+        // Fetch video progress
+        const { data: videos, error: videosError } = await supabase
+          .from('user_progress')
+          .select('video_id, completed, completed_at, time_spent_minutes')
+          .eq('clerk_user_id', user.id);
+
+        if (videosError) {
+          console.error('Error fetching video progress:', videosError);
+        } else if (videos) {
+          setVideoProgress(videos);
+        }
+
+      } catch (error) {
+        console.error('Error fetching progress:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProgress();
   }, [user]);
 
-  // --- Helper methods ---
+  const enrollInCourse = async (courseId: string) => {
+    if (!user) return;
 
-  // Mark a video as completed for the user
+    try {
+      const { error } = await supabase
+        .from('user_course_enrollments')
+        .insert({
+          clerk_user_id: user.id,
+          course_id: courseId,
+          started_at: new Date().toISOString(),
+          last_accessed_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.error('Error enrolling in course:', error);
+        return;
+      }
+
+      // Refresh course progress
+      const { data: courses } = await supabase
+        .from('user_course_enrollments')
+        .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite')
+        .eq('clerk_user_id', user.id);
+
+      if (courses) setCourseProgress(courses);
+    } catch (error) {
+      console.error('Error enrolling in course:', error);
+    }
+  };
+
   const markVideoComplete = async (videoId: string, courseId: string, moduleId: string) => {
     if (!user) return;
-    // Mark as completed or uncompleted based on existing status
-    const { data: existing, error: existingError } = await supabase
-      .from('user_progress')
-      .select('*')
-      .eq('clerk_user_id', user.id)
-      .eq('video_id', videoId)
-      .maybeSingle();
 
-    if (existing) {
-      // Toggle complete: if already complete, set to false; if not, set to true
-      const isCurrentlyComplete = !!existing.completed;
-      await supabase
+    try {
+      // Insert or update video progress
+      const { error } = await supabase
         .from('user_progress')
-        .update({
-          completed: !isCurrentlyComplete,
-          completed_at: !isCurrentlyComplete ? new Date().toISOString() : null,
-        })
-        .eq('id', existing.id);
-    } else {
-      // Insert new row for marking as complete
-      await supabase
-        .from('user_progress')
-        .insert({
+        .upsert({
           clerk_user_id: user.id,
           video_id: videoId,
           course_id: courseId,
           module_id: moduleId,
           completed: true,
           completed_at: new Date().toISOString(),
+          time_spent_minutes: 0
         });
+
+      if (error) {
+        console.error('Error marking video complete:', error);
+        return;
+      }
+
+      // Update video progress state
+      setVideoProgress(prev => {
+        const existingIndex = prev.findIndex(v => v.video_id === videoId);
+        const newProgress = {
+          video_id: videoId,
+          completed: true,
+          completed_at: new Date().toISOString(),
+          time_spent_minutes: 0
+        };
+
+        if (existingIndex >= 0) {
+          const newArray = [...prev];
+          newArray[existingIndex] = newProgress;
+          return newArray;
+        } else {
+          return [...prev, newProgress];
+        }
+      });
+
+      // Award points for video completion
+      await supabase.rpc('award_points', {
+        user_id: user.id,
+        points: 5,
+        activity_desc: 'Completed video lesson'
+      });
+
+      // Calculate and update course progress
+      await updateCourseProgressByVideos(courseId);
+
+    } catch (error) {
+      console.error('Error marking video complete:', error);
     }
-    await fetch();
   };
 
-  // Enroll user in the course if not already
-  const enrollInCourse = async (courseId: string) => {
-    if (!user || !courseId) return;
-    // Check if already enrolled
-    const { data, error } = await supabase
-      .from('user_course_enrollments')
-      .select('*')
-      .eq('clerk_user_id', user.id)
-      .eq('course_id', courseId)
-      .maybeSingle();
+  const updateCourseProgressByVideos = async (courseId: string) => {
+    if (!user) return;
 
-    if (!data) {
-      await supabase
+    try {
+      // Get all videos for this course (we'll need to implement this based on your course structure)
+      // For now, let's get completed videos for this course
+      const { data: completedVideos } = await supabase
+        .from('user_progress')
+        .select('video_id')
+        .eq('clerk_user_id', user.id)
+        .eq('course_id', courseId)
+        .eq('completed', true);
+
+      // This is a simplified calculation - you might want to adjust based on your actual course structure
+      const totalVideosInCourse = getTotalVideosForCourse(courseId);
+      const completedCount = completedVideos?.length || 0;
+      const progressPercentage = totalVideosInCourse > 0 ? Math.round((completedCount / totalVideosInCourse) * 100) : 0;
+
+      await updateCourseProgress(courseId, progressPercentage);
+    } catch (error) {
+      console.error('Error updating course progress:', error);
+    }
+  };
+
+  const getTotalVideosForCourse = (courseId: string) => {
+    // This should match your course structure - adjust based on actual courses
+    const courseTotalVideos: { [key: string]: number } = {
+      '1': 8, // coding course has 8 videos
+      '2': 2, // design course has 2 videos  
+      '3': 2  // data course has 2 videos
+    };
+    return courseTotalVideos[courseId] || 0;
+  };
+
+  const updateCourseProgress = async (courseId: string, progressPercentage: number) => {
+    if (!user) return;
+
+    try {
+      const updateData: any = {
+        progress_percentage: progressPercentage,
+        last_accessed_at: new Date().toISOString()
+      };
+
+      // Mark as completed if 100%
+      if (progressPercentage >= 100) {
+        updateData.completed_at = new Date().toISOString();
+      }
+
+      const { error } = await supabase
         .from('user_course_enrollments')
-        .insert({
-          clerk_user_id: user.id,
-          course_id: courseId, // FIX: Assign courseId argument to course_id column
-          started_at: new Date().toISOString(),
-          progress_percentage: 0,
-        });
+        .update(updateData)
+        .eq('clerk_user_id', user.id)
+        .eq('course_id', courseId);
+
+      if (error) {
+        console.error('Error updating course progress:', error);
+        return;
+      }
+
+      // Update local state
+      setCourseProgress(prev => 
+        prev.map(course => 
+          course.course_id === courseId 
+            ? { 
+                ...course, 
+                progress_percentage: progressPercentage, 
+                last_accessed_at: new Date().toISOString(),
+                completed_at: progressPercentage >= 100 ? new Date().toISOString() : course.completed_at
+              }
+            : course
+        )
+      );
+    } catch (error) {
+      console.error('Error updating course progress:', error);
     }
-    await fetch();
   };
 
-  // Get completed video IDs for the user
-  const getCompletedVideos = () => {
-    return userProgressRows
-      .filter((row: any) => row.completed)
-      .map((row: any) => row.video_id);
-  };
-
-  // Check whether the current video is completed
   const isVideoCompleted = (videoId: string) => {
-    return userProgressRows.some((row: any) => row.video_id === videoId && row.completed);
+    return videoProgress.some(v => v.video_id === videoId && v.completed);
   };
 
-  // Always expose a manual refetch
+  const getCompletedVideos = () => {
+    return videoProgress.filter(v => v.completed).map(v => v.video_id);
+  };
+
   return {
     courseProgress,
+    videoProgress,
     loading,
-    refetch: fetch,
-    markVideoComplete,
     enrollInCourse,
-    getCompletedVideos,
+    markVideoComplete,
+    updateCourseProgress,
     isVideoCompleted,
+    getCompletedVideos
   };
 };
