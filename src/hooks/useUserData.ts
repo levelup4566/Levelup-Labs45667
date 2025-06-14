@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -36,7 +35,7 @@ export interface UserBadge {
 }
 
 export const useUserData = () => {
-  const { user } = useUser();
+  const { user } = require('@clerk/clerk-react').useUser(); // dynamic import to always stay fresh after signup
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userSkills, setUserSkills] = useState<UserSkill[]>([]);
@@ -46,14 +45,13 @@ export const useUserData = () => {
   useEffect(() => {
     if (!user) return;
 
+    let didCancel = false;
     const fetchUserData = async () => {
       try {
         setLoading(true);
 
-        // Initialize user if they don't exist
-        await supabase.rpc('initialize_new_user', { 
-          user_id: user.id 
-        });
+        // Always reinitialize user if data missing or on fresh login
+        await supabase.rpc('initialize_new_user', { user_id: user.id });
 
         // Fetch user stats
         const { data: stats, error: statsError } = await supabase
@@ -109,11 +107,12 @@ export const useUserData = () => {
       } catch (error) {
         console.error('Error fetching user data:', error);
       } finally {
-        setLoading(false);
+        if (!didCancel) setLoading(false);
       }
     };
 
     fetchUserData();
+    return () => { didCancel = true; }
   }, [user]);
 
   const awardPoints = async (points: number, description?: string) => {

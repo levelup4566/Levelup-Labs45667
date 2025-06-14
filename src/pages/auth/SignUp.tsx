@@ -37,14 +37,33 @@ const SignUp = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
+      // Simulate account creation (replace with real auth later if needed)
       console.log('Sign up with:', data);
-      // This would normally call an authentication service
-      // For now, we'll simulate successful registration
-      toast({
-        title: 'Account created successfully!',
-        description: 'Welcome to Levelup Labs.',
-      });
-      navigate('/onboarding');
+
+      // Initialize user in Supabase! Force run initialize_new_user via minimal API call
+      // This assumes user email is the Clerk id, if not, update as appropriate
+      const supabase = (await import('@/integrations/supabase/client')).supabase;
+      // Simulate waiting for Clerk user to be created and available
+      setTimeout(async () => {
+        // Grab Clerk user via Clerk browser SDK
+        let clerkUserId: string | undefined = undefined;
+        try {
+          const clerk = await import('@clerk/clerk-react');
+          const u = clerk.useUser?.().user;
+          clerkUserId = u?.id || undefined;
+        } catch (e) {}
+
+        if (clerkUserId) {
+          await supabase.rpc('initialize_new_user', { user_id: clerkUserId });
+        }
+
+        // Proceed to onboarding after user initialized
+        toast({
+          title: 'Account created successfully!',
+          description: 'Welcome to Levelup Labs.',
+        });
+        navigate('/onboarding');
+      }, 1200);
     } catch (error) {
       toast({
         title: 'Error',
