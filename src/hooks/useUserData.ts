@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseClient } from '@/integrations/supabase/client';
 
 export interface UserStats {
   total_skill_points: number;
@@ -37,6 +37,7 @@ export interface UserBadge {
 
 export const useUserData = () => {
   const { user } = useUser();
+  const supabase = useSupabaseClient();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [userSkills, setUserSkills] = useState<UserSkill[]>([]);
@@ -50,6 +51,7 @@ export const useUserData = () => {
       try {
         setLoading(true);
 
+        console.log('[useUserData] Initializing user for:', user.id);
         // Initialize user if they don't exist
         await supabase.rpc('initialize_new_user', { 
           user_id: user.id 
@@ -63,8 +65,9 @@ export const useUserData = () => {
           .single();
 
         if (statsError) {
-          console.error('Error fetching user stats:', statsError);
+          console.error('[useUserData] Error fetching user stats:', statsError);
         } else if (stats) {
+          console.log('[useUserData] User stats fetched:', stats);
           setUserStats(stats);
         }
 
@@ -76,8 +79,9 @@ export const useUserData = () => {
           .single();
 
         if (profileError) {
-          console.error('Error fetching user profile:', profileError);
+          console.error('[useUserData] Error fetching user profile:', profileError);
         } else if (profile) {
+          console.log('[useUserData] User profile fetched:', profile);
           setUserProfile(profile);
         }
 
@@ -88,8 +92,9 @@ export const useUserData = () => {
           .eq('clerk_user_id', user.id);
 
         if (skillsError) {
-          console.error('Error fetching user skills:', skillsError);
+          console.error('[useUserData] Error fetching user skills:', skillsError);
         } else if (skills) {
+          console.log('[useUserData] User skills fetched:', skills);
           setUserSkills(skills);
         }
 
@@ -101,25 +106,27 @@ export const useUserData = () => {
           .order('earned_at', { ascending: false });
 
         if (badgesError) {
-          console.error('Error fetching user badges:', badgesError);
+          console.error('[useUserData] Error fetching user badges:', badgesError);
         } else if (badges) {
+          console.log('[useUserData] User badges fetched:', badges);
           setUserBadges(badges);
         }
 
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('[useUserData] Error fetching user data:', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, supabase]);
 
   const awardPoints = async (points: number, description?: string) => {
     if (!user) return;
 
     try {
+      console.log(`[useUserData] Awarding ${points} points for:`, description);
       await supabase.rpc('award_points', {
         user_id: user.id,
         points: points,
@@ -133,9 +140,12 @@ export const useUserData = () => {
         .eq('clerk_user_id', user.id)
         .single();
 
-      if (stats) setUserStats(stats);
+      if (stats) {
+        console.log('[useUserData] Stats updated after points awarded:', stats);
+        setUserStats(stats);
+      }
     } catch (error) {
-      console.error('Error awarding points:', error);
+      console.error('[useUserData] Error awarding points:', error);
     }
   };
 
@@ -143,19 +153,21 @@ export const useUserData = () => {
     if (!user) return;
 
     try {
+      console.log('[useUserData] Updating user profile:', profileData);
       const { error } = await supabase
         .from('user_profiles')
         .update(profileData)
         .eq('clerk_user_id', user.id);
 
       if (error) {
-        console.error('Error updating profile:', error);
+        console.error('[useUserData] Error updating profile:', error);
         return;
       }
 
       setUserProfile(prev => prev ? { ...prev, ...profileData } : null);
+      console.log('[useUserData] Profile updated successfully');
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('[useUserData] Error updating profile:', error);
     }
   };
 
@@ -163,6 +175,7 @@ export const useUserData = () => {
     if (!user) return;
 
     try {
+      console.log('[useUserData] Completing onboarding for user:', user.id);
       await supabase.rpc('complete_onboarding', {
         user_id: user.id,
         learning_goal: learningGoal,
@@ -184,9 +197,12 @@ export const useUserData = () => {
         .eq('clerk_user_id', user.id)
         .single();
 
-      if (stats) setUserStats(stats);
+      if (stats) {
+        console.log('[useUserData] Stats updated after onboarding:', stats);
+        setUserStats(stats);
+      }
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      console.error('[useUserData] Error completing onboarding:', error);
     }
   };
 

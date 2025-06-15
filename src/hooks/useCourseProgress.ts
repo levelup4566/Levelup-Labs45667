@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseClient } from '@/integrations/supabase/client';
 
 export interface CourseProgress {
   course_id: string;
@@ -21,6 +21,7 @@ export interface VideoProgress {
 
 export const useCourseProgress = () => {
   const { user } = useUser();
+  const supabase = useSupabaseClient();
   const [courseProgress, setCourseProgress] = useState<CourseProgress[]>([]);
   const [videoProgress, setVideoProgress] = useState<VideoProgress[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,7 @@ export const useCourseProgress = () => {
       try {
         setLoading(true);
 
+        console.log('[useCourseProgress] Fetching progress for user:', user.id);
         // Fetch course enrollments/progress
         const { data: courses, error: coursesError } = await supabase
           .from('user_course_enrollments')
@@ -39,8 +41,9 @@ export const useCourseProgress = () => {
           .eq('clerk_user_id', user.id);
 
         if (coursesError) {
-          console.error('Error fetching course progress:', coursesError);
+          console.error('[useCourseProgress] Error fetching course progress:', coursesError);
         } else if (courses) {
+          console.log('[useCourseProgress] Course progress fetched:', courses);
           setCourseProgress(courses);
         }
 
@@ -51,25 +54,27 @@ export const useCourseProgress = () => {
           .eq('clerk_user_id', user.id);
 
         if (videosError) {
-          console.error('Error fetching video progress:', videosError);
+          console.error('[useCourseProgress] Error fetching video progress:', videosError);
         } else if (videos) {
+          console.log('[useCourseProgress] Video progress fetched:', videos);
           setVideoProgress(videos);
         }
 
       } catch (error) {
-        console.error('Error fetching progress:', error);
+        console.error('[useCourseProgress] Error fetching progress:', error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProgress();
-  }, [user]);
+  }, [user, supabase]);
 
   const enrollInCourse = async (courseId: string) => {
     if (!user) return;
 
     try {
+      console.log('[useCourseProgress] Enrolling user in course:', courseId);
       const { error } = await supabase
         .from('user_course_enrollments')
         .insert({
@@ -80,7 +85,7 @@ export const useCourseProgress = () => {
         });
 
       if (error) {
-        console.error('Error enrolling in course:', error);
+        console.error('[useCourseProgress] Error enrolling in course:', error);
         return;
       }
 
@@ -90,9 +95,12 @@ export const useCourseProgress = () => {
         .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite')
         .eq('clerk_user_id', user.id);
 
-      if (courses) setCourseProgress(courses);
+      if (courses) {
+        console.log('[useCourseProgress] Updated course progress after enrollment:', courses);
+        setCourseProgress(courses);
+      }
     } catch (error) {
-      console.error('Error enrolling in course:', error);
+      console.error('[useCourseProgress] Error enrolling in course:', error);
     }
   };
 
@@ -100,6 +108,7 @@ export const useCourseProgress = () => {
     if (!user) return;
 
     try {
+      console.log('[useCourseProgress] Marking video complete:', videoId);
       // Insert or update video progress
       const { error } = await supabase
         .from('user_progress')
@@ -114,7 +123,7 @@ export const useCourseProgress = () => {
         });
 
       if (error) {
-        console.error('Error marking video complete:', error);
+        console.error('[useCourseProgress] Error marking video complete:', error);
         return;
       }
 
@@ -148,7 +157,7 @@ export const useCourseProgress = () => {
       await updateCourseProgressByVideos(courseId);
 
     } catch (error) {
-      console.error('Error marking video complete:', error);
+      console.error('[useCourseProgress] Error marking video complete:', error);
     }
   };
 
@@ -156,8 +165,7 @@ export const useCourseProgress = () => {
     if (!user) return;
 
     try {
-      // Get all videos for this course (we'll need to implement this based on your course structure)
-      // For now, let's get completed videos for this course
+      // Get all videos for this course
       const { data: completedVideos } = await supabase
         .from('user_progress')
         .select('video_id')
@@ -165,14 +173,15 @@ export const useCourseProgress = () => {
         .eq('course_id', courseId)
         .eq('completed', true);
 
-      // This is a simplified calculation - you might want to adjust based on your actual course structure
+      // Calculate progress based on completed videos
       const totalVideosInCourse = getTotalVideosForCourse(courseId);
       const completedCount = completedVideos?.length || 0;
       const progressPercentage = totalVideosInCourse > 0 ? Math.round((completedCount / totalVideosInCourse) * 100) : 0;
 
+      console.log(`[useCourseProgress] Course ${courseId} progress: ${completedCount}/${totalVideosInCourse} = ${progressPercentage}%`);
       await updateCourseProgress(courseId, progressPercentage);
     } catch (error) {
-      console.error('Error updating course progress:', error);
+      console.error('[useCourseProgress] Error updating course progress:', error);
     }
   };
 
@@ -207,7 +216,7 @@ export const useCourseProgress = () => {
         .eq('course_id', courseId);
 
       if (error) {
-        console.error('Error updating course progress:', error);
+        console.error('[useCourseProgress] Error updating course progress:', error);
         return;
       }
 
@@ -224,8 +233,9 @@ export const useCourseProgress = () => {
             : course
         )
       );
+      console.log(`[useCourseProgress] Course ${courseId} progress updated to ${progressPercentage}%`);
     } catch (error) {
-      console.error('Error updating course progress:', error);
+      console.error('[useCourseProgress] Error updating course progress:', error);
     }
   };
 
