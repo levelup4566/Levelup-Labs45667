@@ -56,7 +56,7 @@ const OnboardingGoals = () => {
       
       <RadioGroup
         value={onboardingData.learningGoal || ''}
-        onValueChange={(value) => updateOnboardingData('learningGoal', value)}
+        onValueChange={(value) => updateOnboardingData('learning_goal', value)}
         className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
         {learningGoals.map((goal) => {

@@ -44,7 +44,7 @@ const OnboardingTime = () => {
       
       <RadioGroup
         value={onboardingData.timeCommitment || ''}
-        onValueChange={(value) => updateOnboardingData('timeCommitment', value)}
+        onValueChange={(value) => updateOnboardingData('time_commitment', value)}
         className="grid grid-cols-1 gap-4"
       >
         {timeOptions.map((option) => {

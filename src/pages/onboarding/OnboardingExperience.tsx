@@ -44,7 +44,7 @@ const OnboardingExperience = () => {
       
       <RadioGroup
         value={onboardingData.experienceLevel || ''}
-        onValueChange={(value) => updateOnboardingData('experienceLevel', value)}
+        onValueChange={(value) => updateOnboardingData('experience_level', value)}
         className="grid grid-cols-1 gap-4"
       >
         {experienceLevels.map((level) => {
