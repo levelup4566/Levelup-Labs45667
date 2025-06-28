@@ -6,6 +6,7 @@ import CourseModule, { CourseModuleProps } from '@/components/course/CourseModul
 import SkillPoints from '@/components/course/SkillPoints';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useUserData } from '@/hooks/useUserData';
 import { 
   ChevronLeft, 
   PlayCircle, 
@@ -30,6 +31,7 @@ interface WebDevCourseProps {
 }
 
 const getWebDevModules = (timeCommitment: string, experienceLevel: string) => {
+
   const baseModules = [
     {
       id: 'module-1',
@@ -155,6 +157,7 @@ const getWebDevModules = (timeCommitment: string, experienceLevel: string) => {
 };
 
 const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) => {
+  const {awardPoints} = useUserData()
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -321,6 +324,7 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
                     onClick={() => {
                       if (!completedProjects.includes('certification')) {
                         setCompletedProjects(prev => [...prev, 'certification']);
+                        awardPoints(5 , "Completed certification exam")
                         toast({
                           title: "Project completed!",
                           description: "You earned 5 skill points for completing the certification exam!",

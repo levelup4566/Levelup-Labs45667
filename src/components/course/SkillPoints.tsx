@@ -23,6 +23,7 @@ const SkillPoints = ({
   
   // Update display points when user stats change
   useEffect(() => {
+    console.log("here is the database fetch",userStats?.total_skill_points)
     if (userStats?.total_skill_points !== undefined) {
       setDisplayPoints(userStats.total_skill_points);
     }

@@ -10,6 +10,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { useUserData } from '@/hooks/useUserData';
+import { useSupabaseClient } from '@/integrations/supabase/client';
+import { useUser } from '@clerk/clerk-react';
+import { useState } from 'react';
 
 /**
  * Video object representing a course lesson
@@ -66,6 +70,8 @@ const CourseModule = ({
   completedVideos = [],
   onToggleComplete
 }: CourseModuleProps) => {
+  const {awardPoints} = useUserData()
+
   /**
    * Safely handles video selection with error catching
    */
@@ -86,7 +92,10 @@ const CourseModule = ({
     try {
       event.stopPropagation(); // Prevent triggering the parent click handler
       event.preventDefault();
-      if (onToggleComplete) onToggleComplete(videoId);
+      if (onToggleComplete){
+        awardPoints(1,"Completing a video")
+        onToggleComplete(videoId);
+      }
     } catch (error) {
       console.error("Error toggling completion status:", error);
       // Could show a toast notification here
