@@ -49,7 +49,7 @@ const OnboardingExperience = () => {
       >
         {experienceLevels.map((level) => {
           const Icon = level.icon;
-          const isSelected = onboardingData.experienceLevel === level.id;
+          const isSelected = onboardingData.experience_level === level.id;
           return (
             <div key={level.id} className="relative">
               <RadioGroupItem

@@ -9,25 +9,25 @@ import { Clock, Coffee, Calendar, ClockIcon } from 'lucide-react';
 const timeOptions = [
   { 
     id: 'minimal', 
-    title: '1-2 hours per week', 
+    title: '5-6 months', 
     description: 'Just dipping my toes in, casual learning',
     icon: Coffee
   },
   { 
     id: 'moderate', 
-    title: '3-5 hours per week', 
+    title: '3-4 months', 
     description: 'Committed to progress at a steady pace',
     icon: Clock
   },
   { 
     id: 'significant', 
-    title: '5-10 hours per week', 
+    title: '2-3 months', 
     description: 'Dedicated to making substantial progress',
     icon: Calendar
   },
   { 
     id: 'intensive', 
-    title: '10+ hours per week', 
+    title: '1-2 months', 
     description: 'Immersive learning is my priority',
     icon: ClockIcon
   },
@@ -49,7 +49,7 @@ const OnboardingTime = () => {
       >
         {timeOptions.map((option) => {
           const Icon = option.icon;
-          const isSelected = onboardingData.timeCommitment === option.id;
+          const isSelected = onboardingData.time_commitment === option.id;
           return (
             <div key={option.id} className="relative">
               <RadioGroupItem

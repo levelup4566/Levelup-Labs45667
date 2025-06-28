@@ -61,7 +61,7 @@ const OnboardingGoals = () => {
       >
         {learningGoals.map((goal) => {
           const Icon = goal.icon;
-          const isSelected = onboardingData.learningGoal === goal.id;
+          const isSelected = onboardingData.learning_goal === goal.id;
           return (
             <div key={goal.id} className="relative">
               <RadioGroupItem
@@ -70,10 +70,10 @@ const OnboardingGoals = () => {
                 className="sr-only"
               />
               <Label htmlFor={goal.id} className="cursor-pointer">
-                <Card className={`p-6 h-full border-2 transition-all hover:border-primary hover:shadow-md ${
+                <Card className={`p-6 h-full border-2 transition-all cursor-pointer ${
                   isSelected 
-                    ? 'border-primary bg-primary/5 shadow-md ring-2 ring-primary/20' 
-                    : 'border-border hover:border-primary'
+                    ? 'border-primary bg-primary/5 shadow-md ring-2 ring-primary/30'
+                    : 'border-border hover:border-primary hover:shadow-md'
                 }`}>
                   <div className="flex items-start gap-4">
                     <div className={`p-2 rounded-full ${
