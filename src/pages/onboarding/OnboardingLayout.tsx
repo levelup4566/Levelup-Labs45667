@@ -105,11 +105,11 @@ const OnboardingLayout = ({ supabase }: OnboardingLayoutProps) => {
 
     if (isLastStep) {
       // If this is the last step, finish onboarding and navigate to specific course path
-      const { learningGoal, timeCommitment, experienceLevel } = onboardingData;
+      const { learning_goal, time_commitment, experience_level } = onboardingData; 
       const coursePath = generateCourseRoute(
-        learningGoal,
-        timeCommitment,
-        experienceLevel
+        learning_goal,
+        time_commitment,
+        experience_level
       );
 
       console.log("Onboarding complete with data:", onboardingData);
