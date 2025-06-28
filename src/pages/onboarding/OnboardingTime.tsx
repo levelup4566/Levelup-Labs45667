@@ -9,25 +9,25 @@ import { Clock, Coffee, Calendar, ClockIcon } from 'lucide-react';
 const timeOptions = [
   { 
     id: 'minimal', 
-    title: '5-6 months', 
+    title: '3 months', 
     description: 'Just dipping my toes in, casual learning',
     icon: Coffee
   },
   { 
     id: 'moderate', 
-    title: '3-4 months', 
+    title: '6 months', 
     description: 'Committed to progress at a steady pace',
     icon: Clock
   },
   { 
     id: 'significant', 
-    title: '2-3 months', 
+    title: '12 months', 
     description: 'Dedicated to making substantial progress',
     icon: Calendar
   },
   { 
     id: 'intensive', 
-    title: '1-2 months', 
+    title: '24 months', 
     description: 'Immersive learning is my priority',
     icon: ClockIcon
   },
