@@ -195,6 +195,20 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
     setOverallProgress(calculateOverallProgress());
   }, [completedVideos]);
   
+  useEffect(() => {
+    const key = `webdev_completedVideos_${timeCommitment}_${experienceLevel}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      setCompletedVideos(JSON.parse(stored));
+    }
+    
+  }, []);
+  
+  useEffect(() => {
+    const key = `webdev_completedVideos_${timeCommitment}_${experienceLevel}`;
+    localStorage.setItem(key, JSON.stringify(completedVideos));
+  }, [completedVideos, timeCommitment, experienceLevel]);
+  
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);
     

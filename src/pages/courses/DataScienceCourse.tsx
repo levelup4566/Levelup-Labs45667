@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
@@ -151,6 +150,22 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
   useEffect(() => {
     setOverallProgress(calculateOverallProgress());
   }, [completedVideos]);
+  
+  // Load completedVideos from localStorage on mount
+  useEffect(() => {
+    const key = `datasci_completedVideos_${timeCommitment}_${experienceLevel}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      setCompletedVideos(JSON.parse(stored));
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  // Save completedVideos to localStorage whenever it changes
+  useEffect(() => {
+    const key = `datasci_completedVideos_${timeCommitment}_${experienceLevel}`;
+    localStorage.setItem(key, JSON.stringify(completedVideos));
+  }, [completedVideos, timeCommitment, experienceLevel]);
   
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);

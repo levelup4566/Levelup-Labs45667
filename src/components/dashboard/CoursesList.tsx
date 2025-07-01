@@ -25,7 +25,7 @@ interface CoursesListProps {
 
 const CoursesList = ({ courses, detailed = false }: CoursesListProps) => {
   const navigate = useNavigate();
-
+  console.log("here is the course" , courses)
   const handleContinueCourse = (course: Course) => {
     if (course.courseId && course.learningGoal) {
       // Navigate back to the course dashboard with the learning goal
