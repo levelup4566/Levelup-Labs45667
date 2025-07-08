@@ -15,26 +15,25 @@ type Course = {
   totalModules: number;
   completedModules: number;
   lastAccessed: string;
-  learningGoal?: string;
+  learning_goal?: string;
+  time_commitment?: string;
+  experience_level?: string;
 };
 
 interface CoursesListProps {
   courses: Course[];
   detailed?: boolean;
+  userProfile?: any; // Accept userProfile for deep linking
 }
 
-const CoursesList = ({ courses, detailed = false }: CoursesListProps) => {
+const CoursesList = ({ courses, detailed = false, userProfile }: CoursesListProps) => {
   const navigate = useNavigate();
   console.log("here is the course" , courses)
   const handleContinueCourse = (course: Course) => {
-    if (course.courseId && course.learningGoal) {
-      // Navigate back to the course dashboard with the learning goal
-      navigate('/course-dashboard', {
-        state: {
-          learningGoal: course.learningGoal,
-          experienceLevel: 'beginner' // You might want to store this in the database
-        }
-      });
+    if (course.courseId && course.learning_goal && course.time_commitment && course.experience_level) {
+      const path = `/courses/${course.learning_goal}/${course.time_commitment}/${course.experience_level}`;
+      console.log('Navigating to:', path);
+      navigate(path);
     }
   };
 
@@ -49,7 +48,8 @@ const CoursesList = ({ courses, detailed = false }: CoursesListProps) => {
                 <div>
                   <CardTitle>{course.title}</CardTitle>
                   <CardDescription className="mt-1">
-                    {course.completedModules} of {course.totalModules} modules completed
+                    {course.completedModules} of {course.totalModules} modules completed<br/>
+                    <span>Path: {course.time_commitment} / {course.experience_level}</span>
                   </CardDescription>
                 </div>
                 <div className="relative">

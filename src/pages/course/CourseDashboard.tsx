@@ -295,11 +295,11 @@ const CourseDashboard = () => {
       };
       
       const courseId = courseIdMap[learningGoal];
-      if (courseId) {
-        enrollInCourse(courseId);
+      if (courseId && userProfile?.time_commitment && experienceLevel) {
+        enrollInCourse(courseId, userProfile.time_commitment, experienceLevel);
       }
     }
-  }, [user, learningGoal, enrollInCourse]);
+  }, [user, learningGoal, enrollInCourse, userProfile, experienceLevel]);
   
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);

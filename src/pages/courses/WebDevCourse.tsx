@@ -7,6 +7,7 @@ import SkillPoints from '@/components/course/SkillPoints';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useUserData } from '@/hooks/useUserData';
+import { useCourseProgress } from '@/hooks/useCourseProgress';
 import { 
   ChevronLeft, 
   PlayCircle, 
@@ -160,6 +161,7 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
   const {awardPoints} = useUserData()
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { markVideoComplete, updateCourseProgress } = useCourseProgress();
   
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
@@ -194,6 +196,12 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
   useEffect(() => {
     setOverallProgress(calculateOverallProgress());
   }, [completedVideos]);
+
+  useEffect(() => {
+    if (overallProgress > 0) {
+      updateCourseProgress('1', overallProgress);
+    }
+  }, [overallProgress, updateCourseProgress]);
   
   useEffect(() => {
     const key = `webdev_completedVideos_${timeCommitment}_${experienceLevel}`;
@@ -226,12 +234,14 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
   const handleToggleComplete = (videoId: string) => {
     setCompletedVideos(prev => {
       if (prev.includes(videoId)) {
+        // Optionally, update backend to mark incomplete if you have such logic
         return prev.filter(id => id !== videoId);
       } else {
+        // Backend sync: mark as complete
+        markVideoComplete(videoId, '1', modules[currentModuleIndex]?.id || '');
         return [...prev, videoId];
       }
     });
-    
     toast({
       title: completedVideos.includes(videoId) ? "Lesson marked as incomplete" : "Lesson completed!",
       description: completedVideos.includes(videoId) 

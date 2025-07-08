@@ -9,10 +9,10 @@ import { Star, Award, Calendar } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useUser();
-  const { userStats, userSkills, userBadges, loading: userLoading } = useUserData();
+  const { userStats, userSkills, userBadges, userProfile, loading: userLoading } = useUserData();
   const { courseProgress, loading: progressLoading } = useCourseProgress();
 
-  if (!user || userLoading || progressLoading) {
+  if (!user || userLoading || progressLoading || !userProfile) {
     return (
       <div className="container px-4 py-8 max-w-6xl">
         <div className="animate-pulse">
@@ -37,7 +37,9 @@ const Dashboard = () => {
     totalModules: getTotalModulesForCourse(progress.course_id),
     completedModules: Math.floor((progress.progress_percentage / 100) * getTotalModulesForCourse(progress.course_id)),
     lastAccessed: formatLastAccessed(progress.last_accessed_at),
-    learningGoal: getCourseGoal(progress.course_id)
+    learning_goal: getCourseGoal(progress.course_id),
+    time_commitment: progress.time_commitment,
+    experience_level: progress.experience_level
   }));
 
   const skills = userSkills.map(skill => ({
@@ -58,6 +60,7 @@ const Dashboard = () => {
         courses={courses} 
         skills={skills} 
         achievements={achievements} 
+        userProfile={userProfile} // Pass userProfile for deep linking
       />
     </div>
   );

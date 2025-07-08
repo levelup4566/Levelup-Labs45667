@@ -10,6 +10,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { useSupabaseClient } from "@/integrations/supabase/client";
 import { useUser } from "@clerk/clerk-react";
+import { useCourseProgress } from '@/hooks/useCourseProgress';
 
 // Define the onboarding steps in order
 const ONBOARDING_STEPS = [
@@ -60,6 +61,7 @@ const OnboardingLayout = ({ supabase }: OnboardingLayoutProps) => {
   const location = useLocation();
 
   const { user } = useUser();
+  const { enrollInCourse } = useCourseProgress();
 
   console.log("user", user);
 
@@ -105,20 +107,27 @@ const OnboardingLayout = ({ supabase }: OnboardingLayoutProps) => {
 
     if (isLastStep) {
       // If this is the last step, finish onboarding and navigate to specific course path
-      const { learning_goal, time_commitment, experience_level } = onboardingData; 
-      const coursePath = generateCourseRoute(
-        learning_goal,
-        time_commitment,
-        experience_level
-      );
-
-      console.log("Onboarding complete with data:", onboardingData);
-      console.log("Navigating to course path:", coursePath);
-
-      navigate(coursePath);
-      return;
+      const { learning_goal, time_commitment, experience_level } = onboardingData;
+      // Map learning_goal to courseId
+      const courseIdMap = {
+        'coding': '1',
+        'design': '2',
+        'data': '3',
+        'gaming': '4',
+        'media': '5',
+        'personal': '6',
+      };
+      const courseId = courseIdMap[learning_goal];
+      if (courseId && time_commitment && experience_level) {
+        enrollInCourse(courseId, time_commitment, experience_level);
+        const coursePath = generateCourseRoute(learning_goal, time_commitment, experience_level);
+        console.log('Onboarding complete with data:', onboardingData);
+        console.log('Enrolling in course:', { courseId, time_commitment, experience_level });
+        console.log('Navigating to course path:', coursePath);
+        navigate(coursePath);
+        return;
+      }
     }
-
     // Otherwise, move to the next step
     navigate(ONBOARDING_STEPS[currentStepIndex + 1].path);
   };

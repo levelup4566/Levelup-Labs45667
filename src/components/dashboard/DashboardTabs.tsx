@@ -13,9 +13,10 @@ interface DashboardTabsProps {
   courses: any[];
   skills: any[];
   achievements: any[];
+  userProfile?: any; // Add userProfile prop
 }
 
-const DashboardTabs = ({ courses, skills, achievements }: DashboardTabsProps) => {
+const DashboardTabs = ({ courses, skills, achievements, userProfile }: DashboardTabsProps) => {
   return (
     <Tabs defaultValue="overview" className="space-y-6">
       <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-secondary p-1 text-secondary-foreground mx-auto">
@@ -36,7 +37,7 @@ const DashboardTabs = ({ courses, skills, achievements }: DashboardTabsProps) =>
       <TabsContent value="overview" className="space-y-6">
         <OverviewCards achievements={achievements} />
         <div className="grid grid-cols-1 gap-6">
-          <CoursesList courses={courses} />
+          <CoursesList courses={courses} userProfile={userProfile} />
         </div>
       </TabsContent>
       
@@ -121,7 +122,7 @@ const DashboardTabs = ({ courses, skills, achievements }: DashboardTabsProps) =>
             </Card>
           </div>
           
-          <CoursesList courses={courses} detailed={true} />
+          <CoursesList courses={courses} detailed={true} userProfile={userProfile} />
         </div>
       </TabsContent>
       

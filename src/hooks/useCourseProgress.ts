@@ -10,6 +10,8 @@ export interface CourseProgress {
   completed_at: string | null;
   last_accessed_at: string | null;
   is_favorite: boolean;
+  time_commitment?: string;
+  experience_level?: string;
 }
 
 export interface VideoProgress {
@@ -37,7 +39,7 @@ export const useCourseProgress = () => {
         // Fetch course enrollments/progress
         const { data: courses, error: coursesError } = await supabase
           .from('user_course_enrollments')
-          .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite')
+          .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite, time_commitment, experience_level')
           .eq('clerk_user_id', user.id);
 
         if (coursesError) {
@@ -70,18 +72,20 @@ export const useCourseProgress = () => {
     fetchProgress();
   }, [user, supabase]);
 
-  const enrollInCourse = async (courseId: string) => {
+  const enrollInCourse = async (courseId: string, timeCommitment: string, experienceLevel: string) => {
     if (!user) return;
 
     try {
-      console.log('[useCourseProgress] Enrolling user in course:', courseId);
+      console.log('[useCourseProgress] Enrolling user in course:', courseId, timeCommitment, experienceLevel);
       const { error } = await supabase
         .from('user_course_enrollments')
         .insert({
           clerk_user_id: user.id,
           course_id: courseId,
           started_at: new Date().toISOString(),
-          last_accessed_at: new Date().toISOString()
+          last_accessed_at: new Date().toISOString(),
+          time_commitment: timeCommitment,
+          experience_level: experienceLevel
         });
 
       if (error) {
@@ -92,7 +96,7 @@ export const useCourseProgress = () => {
       // Refresh course progress
       const { data: courses } = await supabase
         .from('user_course_enrollments')
-        .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite')
+        .select('course_id, progress_percentage, started_at, completed_at, last_accessed_at, is_favorite, time_commitment, experience_level')
         .eq('clerk_user_id', user.id);
 
       if (courses) {

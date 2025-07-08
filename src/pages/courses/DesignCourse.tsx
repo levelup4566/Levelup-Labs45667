@@ -19,6 +19,7 @@ import {
   Check 
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { useCourseProgress } from '@/hooks/useCourseProgress';
 
 interface DesignCourseProps {
   timeCommitment: string;
@@ -147,6 +148,8 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
   
   const [overallProgress, setOverallProgress] = useState<number>(0);
   
+  const { markVideoComplete, updateCourseProgress } = useCourseProgress();
+  
   // Load completedVideos from localStorage on mount
   useEffect(() => {
     const key = `design_completedVideos_${timeCommitment}_${experienceLevel}`;
@@ -166,6 +169,12 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
   useEffect(() => {
     setOverallProgress(calculateOverallProgress());
   }, [completedVideos]);
+
+  useEffect(() => {
+    if (overallProgress > 0) {
+      updateCourseProgress('2', overallProgress);
+    }
+  }, [overallProgress, updateCourseProgress]);
   
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);
@@ -184,8 +193,11 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
   const handleToggleComplete = (videoId: string) => {
     setCompletedVideos(prev => {
       if (prev.includes(videoId)) {
+        // Optionally, update backend to mark incomplete if you have such logic
         return prev.filter(id => id !== videoId);
       } else {
+        // Backend sync: mark as complete
+        markVideoComplete(videoId, '2', modules[currentModuleIndex]?.id || '');
         return [...prev, videoId];
       }
     });

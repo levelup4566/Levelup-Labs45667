@@ -19,6 +19,7 @@ import {
   Check 
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { useCourseProgress } from '@/hooks/useCourseProgress';
 
 interface DataScienceCourseProps {
   timeCommitment: string;
@@ -125,6 +126,8 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
   
   const modules = getDataScienceModules(timeCommitment, experienceLevel);
   
+  const { markVideoComplete } = useCourseProgress();
+
   // Calculate total videos for skill points
   const totalVideos = modules.reduce((total, module) => {
     return total + module.subModules.reduce((subTotal, subModule) => {
@@ -184,12 +187,14 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
   const handleToggleComplete = (videoId: string) => {
     setCompletedVideos(prev => {
       if (prev.includes(videoId)) {
+        // Optionally, update backend to mark incomplete if you have such logic
         return prev.filter(id => id !== videoId);
       } else {
+        // Backend sync: mark as complete
+        markVideoComplete(videoId, '3', modules[currentModuleIndex]?.id || '');
         return [...prev, videoId];
       }
     });
-    
     toast({
       title: completedVideos.includes(videoId) ? "Lesson marked as incomplete" : "Lesson completed!",
       description: completedVideos.includes(videoId) 
