@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,11 +29,15 @@ const CoursesList = ({ courses, detailed = false, userProfile }: CoursesListProp
   const navigate = useNavigate();
   console.log("here is the course" , courses)
   const handleContinueCourse = (course: Course) => {
-    if (course.courseId && course.learning_goal && course.time_commitment && course.experience_level) {
-      const path = `/courses/${course.learning_goal}/${course.time_commitment}/${course.experience_level}`;
-      console.log('Navigating to:', path);
-      navigate(path);
-    }
+    // Always use userProfile for learning_goal, time_commitment, experience_level
+    const goal = userProfile?.learning_goal || 'default';
+    const time = userProfile?.time_commitment || 'default';
+    const exp = userProfile?.experience_level || 'default';
+    const path = `/courses/${goal}/${time}/${exp}`;
+    console.log('[handleContinueCourse] Navigating to:', path, {
+      goal, time, exp, userProfile
+    });
+    navigate(path);
   };
 
   if (detailed) {
@@ -59,8 +62,8 @@ const CoursesList = ({ courses, detailed = false, userProfile }: CoursesListProp
                     animate={false}
                     strokeWidth={4}
                   />
-                  <span className="absolute inset-0 flex items-center justify-center text-sm font-medium">
-                    {course.progress}%
+                  <span className="absolute inset-0 flex items-center justify-center text-sm font-medium text-primary">
+                    {Math.ceil(course.progress)}%
                   </span>
                 </div>
               </div>
@@ -71,6 +74,9 @@ const CoursesList = ({ courses, detailed = false, userProfile }: CoursesListProp
                 <span className="text-muted-foreground flex items-center gap-1">
                   <Clock className="h-3.5 w-3.5" />
                   {course.lastAccessed}
+                </span>
+                <span className="text-primary font-semibold flex items-center gap-1">
+                  {Math.ceil(course.progress)}% completed
                 </span>
                 <Button 
                   variant="default"
@@ -113,13 +119,16 @@ const CoursesList = ({ courses, detailed = false, userProfile }: CoursesListProp
               <div key={course.id} className="p-3 rounded-xl hover:bg-secondary/50 transition-colors duration-200">
                 <div className="flex justify-between items-center">
                   <h3 className="font-medium">{course.title}</h3>
-                  <span className="text-sm font-semibold text-primary">{course.progress}%</span>
+                  <span className="text-sm font-semibold text-primary">{Math.ceil(course.progress)}%</span>
                 </div>
                 <Progress value={course.progress} className="h-2 mt-2 bg-secondary" />
                 <div className="flex justify-between items-center text-sm text-muted-foreground mt-2">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     {course.completedModules} of {course.totalModules} modules
+                  </span>
+                  <span className="text-primary font-semibold flex items-center gap-1">
+                    {Math.ceil(course.progress)}% completed
                   </span>
                   <Button 
                     variant="ghost" 

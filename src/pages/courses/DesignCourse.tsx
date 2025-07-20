@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
 import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
-import SkillPoints from '@/components/course/SkillPoints';
+
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -22,6 +22,7 @@ import { Progress } from '@/components/ui/progress';
 import { useCourseProgress } from '@/hooks/useCourseProgress';
 
 interface DesignCourseProps {
+  courseId: string;
   timeCommitment: string;
   experienceLevel: string;
 }
@@ -114,7 +115,7 @@ const getDesignModules = (timeCommitment: string, experienceLevel: string) => {
   return baseModules;
 };
 
-const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) => {
+const DesignCourse = ({ courseId, timeCommitment, experienceLevel }: DesignCourseProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -126,7 +127,7 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
   
   const modules = getDesignModules(timeCommitment, experienceLevel);
   
-  // Calculate total videos for skill points
+  // Calculate total videos
   const totalVideos = modules.reduce((total, module) => {
     return total + module.subModules.reduce((subTotal, subModule) => {
       return subTotal + subModule.videos.length;
@@ -171,10 +172,10 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
   }, [completedVideos]);
 
   useEffect(() => {
-    if (overallProgress > 0) {
-      updateCourseProgress('2', overallProgress);
+    if (courseId && overallProgress > 0) {
+      updateCourseProgress(courseId, overallProgress);
     }
-  }, [overallProgress, updateCourseProgress]);
+  }, [overallProgress, updateCourseProgress, courseId]);
   
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);
@@ -197,7 +198,7 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
         return prev.filter(id => id !== videoId);
       } else {
         // Backend sync: mark as complete
-        markVideoComplete(videoId, '2', modules[currentModuleIndex]?.id || '');
+        markVideoComplete(videoId, courseId, modules[currentModuleIndex]?.id || '');
         return [...prev, videoId];
       }
     });
@@ -271,12 +272,6 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
         <div className="container px-4 max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
-              <SkillPoints 
-                completedVideos={completedVideos}
-                completedProjects={completedProjects}
-                totalVideos={totalVideos}
-                totalProjects={1}
-              />
               
               <div className="bg-card rounded-lg border shadow-sm p-4 mb-4 sticky top-24">
                 <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
@@ -305,7 +300,7 @@ const DesignCourse = ({ timeCommitment, experienceLevel }: DesignCourseProps) =>
                         setCompletedProjects(prev => [...prev, 'portfolio']);
                         toast({
                           title: "Project completed!",
-                          description: "You earned 5 skill points for completing the design portfolio review!",
+                          description: "You earned a reward for completing the design portfolio review!",
                         });
                       }
                     }}

@@ -5,6 +5,7 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "@/integrations/supabase/client";
 
+
 /**
  * Ensures a user profile exists in Supabase for the current Clerk user.
  * Creates a new profile if one does not exist.
@@ -58,6 +59,7 @@ export function useEnsureUserProfile(_supabase: SupabaseClient<Database>) {
           console.error("[useEnsureUserProfile] Error inserting user profile:", insertError);
         } else {
           console.log("[useEnsureUserProfile] Successfully inserted user profile for clerk_user_id:", clerkUserId);
+
         }
       }
     }

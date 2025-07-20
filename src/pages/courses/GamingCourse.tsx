@@ -1,178 +1,152 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
-import Footer from '@/components/layout/Footer';
-import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
 
+import CourseModule from '@/components/course/CourseModule';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  ChevronLeft, 
-  PlayCircle, 
-  BookOpen, 
-  BarChart3, 
-  BookMarked,
-  Users,
-  Calendar,
-  ArrowRight,
-  CheckCircle,
-  Check 
-} from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 import { useCourseProgress } from '@/hooks/useCourseProgress';
+import { Progress } from '@/components/ui/progress';
+import { ChevronLeft, Users, Calendar, BarChart3, ArrowRight, PlayCircle, Check } from 'lucide-react';
 
-interface DataScienceCourseProps {
+interface GamingCourseProps {
+  courseId: string;
   timeCommitment: string;
   experienceLevel: string;
 }
 
-const getDataScienceModules = (timeCommitment: string, experienceLevel: string) => {
+const getGamingModules = (timeCommitment: string, experienceLevel: string) => {
   const baseModules = [
     {
-      id: 'module-1',
-      title: 'Module 1: Data Science Foundations',
-      subtitle: '(4 subtopics)',
-      tags: ['Data Science', 'Statistics'],
+      id: 'gm1',
+      title: 'Module 1: Game Development Basics',
+      subtitle: '(2 subtopics)',
+      tags: ['Engines', 'Design'],
       subModules: [
         {
-          id: 'sub-1',
-          title: 'Statistical Fundamentals',
+          id: 'gm1-1',
+          title: 'Introduction to Game Engines',
           videos: [
-            {
-              id: 'video-1',
-              title: 'Descriptive Statistics',
-              duration: '18:30',
-              videoUrl: 'https://example.com/videos/descriptive-stats',
-            },
-            {
-              id: 'video-2',
-              title: 'Probability Distributions',
-              duration: '22:15',
-              videoUrl: 'https://example.com/videos/probability',
-            },
+            { id: 'vid1', title: 'What is a Game Engine?', duration: '10:00', videoUrl: '#' },
+            { id: 'vid2', title: 'Unity vs Unreal vs Godot', duration: '12:00', videoUrl: '#' },
           ],
         },
         {
-          id: 'sub-2',
-          title: 'Data Collection and Cleaning',
+          id: 'gm1-2',
+          title: 'Game Design Principles',
           videos: [
-            {
-              id: 'video-3',
-              title: 'Data Sources and APIs',
-              duration: '20:45',
-              videoUrl: 'https://example.com/videos/data-collection',
-            },
+            { id: 'vid3', title: 'Core Game Loops', duration: '8:30', videoUrl: '#' },
+            { id: 'vid4', title: 'Balancing Fun and Challenge', duration: '9:45', videoUrl: '#' },
           ],
         },
       ],
     },
     {
-      id: 'module-2',
-      title: 'Module 2: Python for Data Science',
-      subtitle: '(5 subtopics)',
-      tags: ['Python', 'Programming'],
+      id: 'gm2',
+      title: 'Module 2: Building Your First Game',
+      subtitle: '(2 subtopics)',
+      tags: ['Prototyping', 'Publishing'],
       subModules: [
         {
-          id: 'sub-3',
-          title: 'Pandas and NumPy',
+          id: 'gm2-1',
+          title: 'Prototyping',
           videos: [
-            {
-              id: 'video-4',
-              title: 'Data Manipulation with Pandas',
-              duration: '25:20',
-              videoUrl: 'https://example.com/videos/pandas-basics',
-            },
+            { id: 'vid5', title: 'Rapid Prototyping Techniques', duration: '11:00', videoUrl: '#' },
+          ],
+        },
+        {
+          id: 'gm2-2',
+          title: 'Publishing Basics',
+          videos: [
+            { id: 'vid6', title: 'Exporting and Sharing Your Game', duration: '13:20', videoUrl: '#' },
           ],
         },
       ],
     },
   ];
-
   if (experienceLevel !== 'beginner') {
     baseModules.push({
-      id: 'module-3',
-      title: 'Module 3: Machine Learning Basics',
-      subtitle: '(6 subtopics)',
-      tags: ['ML', 'Algorithms'],
+      id: 'gm3',
+      title: 'Module 3: Advanced Game Programming',
+      subtitle: '(1 subtopic)',
+      tags: ['Physics', 'Animation'],
       subModules: [
         {
-          id: 'sub-4',
-          title: 'Supervised Learning',
+          id: 'gm3-1',
+          title: 'Physics & Animation',
           videos: [
-            {
-              id: 'video-5',
-              title: 'Linear Regression',
-              duration: '28:40',
-              videoUrl: 'https://example.com/videos/linear-regression',
-            },
+            { id: 'vid7', title: 'Physics Engines', duration: '14:00', videoUrl: '#' },
+            { id: 'vid8', title: 'Animating Characters', duration: '15:30', videoUrl: '#' },
           ],
         },
       ],
     });
   }
-
+  if (timeCommitment === 'significant' || timeCommitment === 'intensive') {
+    baseModules.push({
+      id: 'gm4',
+      title: 'Module 4: Multiplayer & Publishing',
+      subtitle: '(2 subtopics)',
+      tags: ['Multiplayer', 'Stores'],
+      subModules: [
+        {
+          id: 'gm4-1',
+          title: 'Multiplayer Game Basics',
+          videos: [
+            { id: 'vid9', title: 'Networking for Games', duration: '16:00', videoUrl: '#' },
+          ],
+        },
+        {
+          id: 'gm4-2',
+          title: 'Publishing to Stores',
+          videos: [
+            { id: 'vid10', title: 'Releasing on Steam & Mobile', duration: '17:10', videoUrl: '#' },
+          ],
+        },
+      ],
+    });
+  }
   return baseModules;
 };
 
-const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCourseProps) => {
-  const navigate = useNavigate();
+const GamingCourse = ({ courseId, timeCommitment, experienceLevel }: GamingCourseProps) => {
+  const { markVideoComplete } = useCourseProgress();
   const { toast } = useToast();
-  
+  const navigate = useNavigate();
+
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
   const [completedVideos, setCompletedVideos] = useState<string[]>([]);
   const [completedProjects, setCompletedProjects] = useState<string[]>([]);
   const [currentModuleIndex, setCurrentModuleIndex] = useState<number>(0);
-  
-  const modules = getDataScienceModules(timeCommitment, experienceLevel);
-  
-  const { markVideoComplete } = useCourseProgress();
 
-  // Calculate total videos
+  const modules = getGamingModules(timeCommitment, experienceLevel);
+
   const totalVideos = modules.reduce((total, module) => {
     return total + module.subModules.reduce((subTotal, subModule) => {
       return subTotal + subModule.videos.length;
     }, 0);
   }, 0);
-  
+
   const calculateOverallProgress = () => {
     if (!modules || modules.length === 0) return 0;
-    
-    let totalVideos = 0;
+    let total = 0;
     modules.forEach(module => {
       module.subModules.forEach(subModule => {
-        totalVideos += subModule.videos.length;
+        total += subModule.videos.length;
       });
     });
-    
-    return totalVideos > 0 ? Math.round((completedVideos.length / totalVideos) * 100) : 0;
+    return total > 0 ? Math.round((completedVideos.length / total) * 100) : 0;
   };
-  
+
   const [overallProgress, setOverallProgress] = useState<number>(0);
-  
+
   useEffect(() => {
     setOverallProgress(calculateOverallProgress());
   }, [completedVideos]);
-  
-  // Load completedVideos from localStorage on mount
-  useEffect(() => {
-    const key = `datasci_completedVideos_${timeCommitment}_${experienceLevel}`;
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      setCompletedVideos(JSON.parse(stored));
-    }
-    // eslint-disable-next-line
-  }, []);
 
-  // Save completedVideos to localStorage whenever it changes
-  useEffect(() => {
-    const key = `datasci_completedVideos_${timeCommitment}_${experienceLevel}`;
-    localStorage.setItem(key, JSON.stringify(completedVideos));
-  }, [completedVideos, timeCommitment, experienceLevel]);
-  
   const handleVideoSelect = (videoId: string) => {
     setSelectedVideoId(videoId);
-    
     for (const module of modules) {
       for (const subModule of module.subModules) {
         const video = subModule.videos.find(v => v.id === videoId);
@@ -183,15 +157,13 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
       }
     }
   };
-  
+
   const handleToggleComplete = (videoId: string) => {
     setCompletedVideos(prev => {
       if (prev.includes(videoId)) {
-        // Optionally, update backend to mark incomplete if you have such logic
         return prev.filter(id => id !== videoId);
       } else {
-        // Backend sync: mark as complete
-        markVideoComplete(videoId, '3', modules[currentModuleIndex]?.id || '');
+        markVideoComplete(videoId, courseId, modules[currentModuleIndex]?.id || '');
         return [...prev, videoId];
       }
     });
@@ -200,16 +172,17 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
       description: completedVideos.includes(videoId) 
         ? "You can revisit this lesson anytime." 
         : "Great job! Keep up the good work.",
+      variant: completedVideos.includes(videoId) ? "default" : "default",
     });
   };
 
   const getEstimatedTime = () => {
     switch (timeCommitment) {
-      case 'minimal': return '10-12 weeks';
-      case 'moderate': return '6-8 weeks';
-      case 'significant': return '4-6 weeks';
-      case 'intensive': return '3-4 weeks';
-      default: return '6-8 weeks';
+      case 'minimal': return '6-8 weeks';
+      case 'moderate': return '4-6 weeks';
+      case 'significant': return '3-4 weeks';
+      case 'intensive': return '2-3 weeks';
+      default: return '4-6 weeks';
     }
   };
 
@@ -217,7 +190,7 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
     <div className="min-h-screen flex flex-col bg-background">
       <RouterHeader />
       <main className="flex-1 pt-24 pb-16 bg-gradient-to-b from-background to-background/80">
-        <div className="bg-gradient-to-r from-green-600/90 to-blue-500/80 text-white mb-8">
+        <div className="bg-gradient-to-r from-primary/90 to-accent/80 text-white mb-8">
           <div className="container px-4 py-6 max-w-6xl">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
@@ -230,7 +203,7 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
                   </button>
                   <span className="text-sm font-medium">Back to Dashboard</span>
                 </div>
-                <h1 className="text-3xl font-bold">Data Science and Analysis</h1>
+                <h1 className="text-3xl font-bold">Game Development Path</h1>
                 <div className="flex flex-wrap items-center gap-3 mt-2">
                   <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm px-2.5 py-0.5 text-xs font-semibold text-white">
                     {experienceLevel} level
@@ -240,7 +213,7 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
                   </span>
                   <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm px-2.5 py-0.5 text-xs font-semibold text-white">
                     <Users className="mr-1 h-3 w-3" />
-                    2,756 enrolled
+                    1,234 enrolled
                   </span>
                   <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-sm px-2.5 py-0.5 text-xs font-semibold text-white">
                     <Calendar className="mr-1 h-3 w-3" />
@@ -255,6 +228,10 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
                 </div>
                 <div className="flex-1 max-w-[120px]">
                   <Progress value={overallProgress} className="h-2 bg-white/20" />
+                  <div className="flex justify-between mt-1 text-xs text-white/80">
+                    <span>Progress</span>
+                    <span>{modules.length > 0 ? `${modules[0].id}/${modules.length}` : "0/0"}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -288,16 +265,17 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
                   <Button 
                     className="w-full gap-2"
                     onClick={() => {
-                      if (!completedProjects.includes('analysis-project')) {
-                        setCompletedProjects(prev => [...prev, 'analysis-project']);
+                      if (!completedProjects.includes('certification')) {
+                        setCompletedProjects(prev => [...prev, 'certification']);
+                        // awardPoints(5 , "Completed certification exam")
                         toast({
                           title: "Project completed!",
-                          description: "You earned a reward for completing the data analysis project!",
+                          description: "You earned a reward for completing the certification exam!",
                         });
                       }
                     }}
                   >
-                    Data Analysis Project
+                    Certification Exam
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -335,22 +313,13 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
                       </div>
                       
                       <p className="text-muted-foreground mt-2 mb-4">
-                        This data science lesson is designed for {experienceLevel} level learners with a {timeCommitment} commitment.
+                        This lesson is tailored for {experienceLevel} level learners with a {timeCommitment} time commitment.
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-8 text-center">
-                    <div className="bg-primary/10 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4">
-                      <PlayCircle className="w-12 h-12 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-medium">Select a video to start learning</h3>
-                    <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-                      Choose a module and video to begin your data science journey
-                    </p>
-                    <Button className="mt-6" onClick={() => handleVideoSelect(modules[0]?.subModules[0]?.videos[0]?.id || '')}>
-                      Start First Lesson
-                    </Button>
+                  <div className="p-8 text-center text-muted-foreground">
+                    <p>Select a lesson from the modules to get started!</p>
                   </div>
                 )}
               </div>
@@ -358,9 +327,8 @@ const DataScienceCourse = ({ timeCommitment, experienceLevel }: DataScienceCours
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
-};
+}
 
-export default DataScienceCourse;
+export default GamingCourse;

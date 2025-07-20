@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import RouterHeader from '@/components/layout/RouterHeader';
 import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
-import SkillPoints from '@/components/course/SkillPoints';
+
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useUserData } from '@/hooks/useUserData';
@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/card';
 
 interface WebDevCourseProps {
+  courseId: string;
   timeCommitment: string;
   experienceLevel: string;
 }
@@ -157,11 +158,14 @@ const getWebDevModules = (timeCommitment: string, experienceLevel: string) => {
   return baseModules;
 };
 
-const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) => {
-  const {awardPoints} = useUserData()
+// Hardcode the real course UUID for Web Development
+const WEBDEV_COURSE_ID = 'e6904d1a-5748-4524-9535-7955a368e5cb';
+
+const WebDevCourse = ({ courseId, timeCommitment, experienceLevel }: WebDevCourseProps) => {
+  const { awardPoints, deductPoints } = useUserData();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { markVideoComplete, updateCourseProgress } = useCourseProgress();
+  const { markVideoComplete, markVideoIncomplete, updateCourseProgress } = useCourseProgress();
   
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [currentVideoTitle, setCurrentVideoTitle] = useState<string>('');
@@ -171,7 +175,7 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
   
   const modules = getWebDevModules(timeCommitment, experienceLevel);
   
-  // Calculate total videos for skill points
+  // Calculate total videos
   const totalVideos = modules.reduce((total, module) => {
     return total + module.subModules.reduce((subTotal, subModule) => {
       return subTotal + subModule.videos.length;
@@ -198,10 +202,10 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
   }, [completedVideos]);
 
   useEffect(() => {
-    if (overallProgress > 0) {
-      updateCourseProgress('1', overallProgress);
+    if (courseId && overallProgress > 0) {
+      updateCourseProgress(courseId, overallProgress);
     }
-  }, [overallProgress, updateCourseProgress]);
+  }, [overallProgress, updateCourseProgress, courseId]);
   
   useEffect(() => {
     const key = `webdev_completedVideos_${timeCommitment}_${experienceLevel}`;
@@ -234,11 +238,12 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
   const handleToggleComplete = (videoId: string) => {
     setCompletedVideos(prev => {
       if (prev.includes(videoId)) {
-        // Optionally, update backend to mark incomplete if you have such logic
+        // Mark as incomplete and deduct points via backend
+        markVideoIncomplete(videoId, WEBDEV_COURSE_ID, modules[currentModuleIndex]?.id || '');
         return prev.filter(id => id !== videoId);
       } else {
-        // Backend sync: mark as complete
-        markVideoComplete(videoId, '1', modules[currentModuleIndex]?.id || '');
+        // Mark as complete and award points via backend
+        markVideoComplete(videoId, WEBDEV_COURSE_ID, modules[currentModuleIndex]?.id || '');
         return [...prev, videoId];
       }
     });
@@ -249,6 +254,18 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
         : "Great job! Keep up the good work.",
       variant: completedVideos.includes(videoId) ? "default" : "default",
     });
+  };
+
+  // Certification Exam logic
+  const handleCertification = () => {
+    if (!completedProjects.includes('certification')) {
+      setCompletedProjects(prev => [...prev, 'certification']);
+      awardPoints(5, 'Completed certification exam');
+      toast({
+        title: "Project completed!",
+        description: "You earned a reward for completing the certification exam!",
+      });
+    }
   };
 
   const getEstimatedTime = () => {
@@ -316,12 +333,6 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
         <div className="container px-4 max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
-              <SkillPoints 
-                completedVideos={completedVideos}
-                completedProjects={completedProjects}
-                totalVideos={totalVideos}
-                totalProjects={1}
-              />
               
               <div className="bg-card rounded-lg border shadow-sm p-4 mb-4 sticky top-24">
                 <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
@@ -345,16 +356,8 @@ const WebDevCourse = ({ timeCommitment, experienceLevel }: WebDevCourseProps) =>
                 <div className="mt-6 pt-4 border-t">
                   <Button 
                     className="w-full gap-2"
-                    onClick={() => {
-                      if (!completedProjects.includes('certification')) {
-                        setCompletedProjects(prev => [...prev, 'certification']);
-                        awardPoints(5 , "Completed certification exam")
-                        toast({
-                          title: "Project completed!",
-                          description: "You earned 5 skill points for completing the certification exam!",
-                        });
-                      }
-                    }}
+                    onClick={handleCertification}
+                    disabled={completedProjects.includes('certification')}
                   >
                     Certification Exam
                     <ArrowRight className="h-4 w-4" />

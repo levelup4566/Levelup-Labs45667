@@ -4,7 +4,6 @@ import { useUser } from '@clerk/clerk-react';
 import { useSupabaseClient } from '@/integrations/supabase/client';
 
 export interface UserStats {
-  total_skill_points: number;
   current_level: number;
   experience_points: number;
   points_to_next_level: number;
@@ -24,7 +23,6 @@ export interface UserProfile {
 export interface UserSkill {
   skill_name: string;
   skill_level: number;
-  skill_points: number;
 }
 
 export interface UserBadge {
@@ -88,7 +86,7 @@ export const useUserData = () => {
         // Fetch user skills
         const { data: skills, error: skillsError } = await supabase
           .from('user_skills')
-          .select('skill_name, skill_level, skill_points')
+          .select('skill_name, skill_level')
           .eq('clerk_user_id', user.id);
 
         if (skillsError) {
@@ -122,32 +120,9 @@ export const useUserData = () => {
     fetchUserData();
   }, [user, supabase]);
 
-  const awardPoints = async (points: number, description?: string) => {
-    if (!user) return;
 
-    try {
-      console.log(`[useUserData] Awarding ${points} points for:`, description);
-      await supabase.rpc('award_points', {
-        user_id: user.id,
-        points: points,
-        activity_desc: description
-      });
 
-      // Refresh user stats
-      const { data: stats } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('clerk_user_id', user.id)
-        .single();
 
-      if (stats) {
-        console.log('[useUserData] Stats updated after points awarded:', stats);
-        setUserStats(stats);
-      }
-    } catch (error) {
-      console.error('[useUserData] Error awarding points:', error);
-    }
-  };
 
   const updateUserProfile = async (profileData: Partial<UserProfile>) => {
     if (!user) return;
@@ -212,7 +187,6 @@ export const useUserData = () => {
     userSkills,
     userBadges,
     loading,
-    awardPoints,
     updateUserProfile,
     completeOnboarding
   };

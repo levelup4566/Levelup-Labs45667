@@ -24,6 +24,9 @@ import SignUpPage from "./routes/sign-up";
 import WebDevCourse from "./pages/courses/WebDevCourse";
 import DesignCourse from "./pages/courses/DesignCourse";
 import DataScienceCourse from "./pages/courses/DataScienceCourse";
+import GamingCourse from "./pages/courses/GamingCourse";
+import MediaCourse from "./pages/courses/MediaCourse";
+import PersonalGrowthCourse from "./pages/courses/PersonalGrowthCourse";
 
 import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
 import { useSupabaseAuthSync } from "@/hooks/useSupabaseAuthSync";
@@ -366,6 +369,252 @@ const App = () => {
               <Route path="/courses/data/intensive/advanced" element={
                 <ErrorBoundary>
                   <DataScienceCourse timeCommitment="intensive" experienceLevel="advanced" />
+                </ErrorBoundary>
+              } />
+              
+              {/* Gaming Courses */}
+              <Route path="/courses/gaming/minimal/beginner" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/minimal/novice" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/minimal/intermediate" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/minimal/advanced" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/moderate/beginner" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/moderate/novice" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/moderate/intermediate" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/moderate/advanced" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/significant/beginner" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/significant/novice" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/significant/intermediate" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/significant/advanced" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/intensive/beginner" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/intensive/novice" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/intensive/intermediate" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/gaming/intensive/advanced" element={
+                <ErrorBoundary>
+                  <GamingCourse />
+                </ErrorBoundary>
+              } />
+
+              {/* Media Courses */}
+              <Route path="/courses/media/minimal/beginner" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/minimal/novice" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/minimal/intermediate" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/minimal/advanced" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/moderate/beginner" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/moderate/novice" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/moderate/intermediate" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/moderate/advanced" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/significant/beginner" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/significant/novice" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/significant/intermediate" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/significant/advanced" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/intensive/beginner" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/intensive/novice" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/intensive/intermediate" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/media/intensive/advanced" element={
+                <ErrorBoundary>
+                  <MediaCourse />
+                </ErrorBoundary>
+              } />
+
+              {/* Personal Growth Courses */}
+              <Route path="/courses/personal/minimal/beginner" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/minimal/novice" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/minimal/intermediate" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/minimal/advanced" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/moderate/beginner" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/moderate/novice" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/moderate/intermediate" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/moderate/advanced" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/significant/beginner" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/significant/novice" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/significant/intermediate" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/significant/advanced" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/intensive/beginner" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/intensive/novice" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/intensive/intermediate" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/personal/intensive/advanced" element={
+                <ErrorBoundary>
+                  <PersonalGrowthCourse />
                 </ErrorBoundary>
               } />
               
