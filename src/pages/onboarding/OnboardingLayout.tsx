@@ -15,16 +15,7 @@ import { useCourseProgress } from '@/hooks/useCourseProgress';
 // Define the onboarding steps in order
 const ONBOARDING_STEPS = [
   { path: "/onboarding", label: "Learning Goals", dataKey: "learning_goal" },
-  {
-    path: "/onboarding/time",
-    label: "Time Commitment",
-    dataKey: "time_commitment",
-  },
-  {
-    path: "/onboarding/experience",
-    label: "Experience Level",
-    dataKey: "experience_level",
-  },
+  { path: "/onboarding/time", label: "Time Commitment", dataKey: "time_commitment" },
 ];
 
 // Create a context to store and share onboarding data
@@ -96,40 +87,26 @@ const OnboardingLayout = ({ supabase }: OnboardingLayoutProps) => {
 
   const generateCourseRoute = (
     learningGoal: string,
-    timeCommitment: string,
-    experienceLevel: string
+    timeCommitment: string
   ) => {
-    return `/courses/${learningGoal}/${timeCommitment}/${experienceLevel}`;
+    return `/courses/${learningGoal}/${timeCommitment}`;
   };
 
   const goToNextStep = () => {
     if (!canContinue) return;
 
+    // After selecting Web Dev, route directly to WebDevCourse
     if (isLastStep) {
-      // If this is the last step, finish onboarding and navigate to specific course path
-      const { learning_goal, time_commitment, experience_level } = onboardingData;
-      // Map learning_goal to courseId
-      const courseIdMap = {
-        'coding': '1',
-        'design': '2',
-        'data': '3',
-        'gaming': '4',
-        'media': '5',
-        'personal': '6',
-      };
-      const courseId = courseIdMap[learning_goal];
-      if (courseId && time_commitment && experience_level) {
-        enrollInCourse(courseId, time_commitment, experience_level);
-        const coursePath = generateCourseRoute(learning_goal, time_commitment, experience_level);
-        console.log('Onboarding complete with data:', onboardingData);
-        console.log('Enrolling in course:', { courseId, time_commitment, experience_level });
-        console.log('Navigating to course path:', coursePath);
-        navigate(coursePath);
+      const { learning_goal } = onboardingData;
+      if (learning_goal === 'coding') {
+        navigate('/courses/coding');
         return;
       }
     }
-    // Otherwise, move to the next step
-    navigate(ONBOARDING_STEPS[currentStepIndex + 1].path);
+    // No next step, but keep fallback for extensibility
+    if (ONBOARDING_STEPS[currentStepIndex + 1]) {
+      navigate(ONBOARDING_STEPS[currentStepIndex + 1].path);
+    }
   };
 
   const goToPreviousStep = () => {

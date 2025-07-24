@@ -70,7 +70,6 @@ const CourseModule = ({
   completedVideos = [],
   onToggleComplete
 }: CourseModuleProps) => {
-  const {awardPoints} = useUserData()
 
   /**
    * Safely handles video selection with error catching
@@ -93,7 +92,6 @@ const CourseModule = ({
       event.stopPropagation(); // Prevent triggering the parent click handler
       event.preventDefault();
       if (onToggleComplete){
-        awardPoints(1,"Completing a video")
         onToggleComplete(videoId);
       }
     } catch (error) {
@@ -176,7 +174,7 @@ const CourseModule = ({
                             className="h-8 w-8"
                             onClick={(e) => handleToggleComplete(video.id, e)}
                           >
-                            <Check className={`h-4 w-4 ${isCompleted ? 'text-green-600' : 'text-gray-300'}`} />
+                            <Check className={`h-5 w-5 transition-colors duration-150 ${isCompleted ? 'text-green-500' : 'text-gray-300'}`} />
                           </Button>
                         </div>
                       );
