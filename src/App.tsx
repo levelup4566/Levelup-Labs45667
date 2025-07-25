@@ -22,6 +22,7 @@ import SignUpPage from "./routes/sign-up";
 // Import specific course components
 import WebDevCourse from "./pages/courses/WebDevCourse";
 import LearningPath from "./pages/course/LearningPath";
+import CourseDetail from "./pages/course/CourseDetail";
 
 import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
 
@@ -102,6 +103,13 @@ const App = () => {
               <Route path="/learning-path/:goalId/:timeId/:experienceId" element={
                 <ErrorBoundary>
                   <LearningPath />
+                </ErrorBoundary>
+              } />
+
+              {/* Course Detail Page */}
+              <Route path="/course/:courseSlug" element={
+                <ErrorBoundary>
+                  <CourseDetail />
                 </ErrorBoundary>
               } />
 
