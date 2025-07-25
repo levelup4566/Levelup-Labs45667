@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,11 +21,9 @@ import SignUpPage from "./routes/sign-up";
 
 // Import specific course components
 import WebDevCourse from "./pages/courses/WebDevCourse";
+import LearningPath from "./pages/course/LearningPath";
 
 import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
-import { useSupabaseAuthSync } from "@/hooks/useSupabaseAuthSync";
-import { useAuth } from "@clerk/clerk-react";
-import { useSupabaseClient } from "@/integrations/supabase/client";
 
 /**
  * App Component - Root component that sets up the application structure
@@ -37,8 +34,6 @@ import { useSupabaseClient } from "@/integrations/supabase/client";
  * - Routing with error boundaries for fault isolation
  */
 const App = () => {
-  const supabase = useSupabaseClient();
-  useEnsureUserProfile(supabase);
   // Create and configure the QueryClient with robust error handling
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
@@ -46,7 +41,7 @@ const App = () => {
         retry: 1, // Limit retries to prevent excessive network traffic on failure
         refetchOnWindowFocus: false, // Disable auto-refetch for better performance
         staleTime: 5 * 60 * 1000, // 5 minutes of cache validity
-        gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes 
+        gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes
         meta: {
           // Handle errors at the query level
           onError: (error: unknown) => {
@@ -91,18 +86,25 @@ const App = () => {
                   <SignUpPage />
                 </ErrorBoundary>
               } />
-              
+
               {/* Onboarding flow */}
               <Route path="/onboarding" element={
                 <ErrorBoundary>
-                  <OnboardingLayout supabase={supabase} />
+                  <OnboardingLayout />
                 </ErrorBoundary>
               }>
                 <Route index element={<OnboardingGoals />} />
                 <Route path="time" element={<OnboardingTime />} />
                 <Route path="experience" element={<OnboardingExperience />} />
               </Route>
-              
+
+              {/* Learning Path Page */}
+              <Route path="/learning-path/:goalId/:timeId/:experienceId" element={
+                <ErrorBoundary>
+                  <LearningPath />
+                </ErrorBoundary>
+              } />
+
               {/* Main application routes */}
               <Route path="/course-dashboard" element={
                 <ErrorBoundary>

@@ -16,7 +16,7 @@ interface DashboardTabsProps {
   userStats?: { current_level?: number };
 }
 
-const DashboardTabs = ({ courses, skills, userProfile, userStats }: DashboardTabsProps) => {
+const DashboardTabs = ({ courses, skills }: { courses: any[]; skills: any[] }) => {
   return (
     <Tabs defaultValue="overview" className="space-y-6">
       <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-secondary p-1 text-secondary-foreground mx-auto">
@@ -74,7 +74,7 @@ const DashboardTabs = ({ courses, skills, userProfile, userStats }: DashboardTab
 
           </div>
           
-          <CoursesList courses={courses} detailed={true} userProfile={userProfile} />
+          <CoursesList courses={courses} detailed={true} />
         </div>
       </TabsContent>
       

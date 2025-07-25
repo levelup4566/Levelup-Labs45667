@@ -5,9 +5,8 @@ import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
 
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { useUserData } from '@/hooks/useUserData';
-import { useCourseProgress } from '@/hooks/useCourseProgress';
+import { useToast } from '@/components/ui/use-toast';
+// UI-only: Remove useUserData and useCourseProgress, use local state instead
 import { 
   ChevronLeft, 
   PlayCircle, 

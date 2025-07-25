@@ -25,7 +25,7 @@ interface CoursesListProps {
   userProfile?: any; // Accept userProfile for deep linking
 }
 
-const CoursesList = ({ courses, detailed = false, userProfile }: CoursesListProps) => {
+const CoursesList = ({ courses, detailed = false }: { courses: any[]; detailed?: boolean }) => {
   // Only keep web development course (id: 1 or title contains 'Web Development')
   const webDevCourses = courses.filter(
     (course) => course.id === 1 || course.title.toLowerCase().includes('web development')

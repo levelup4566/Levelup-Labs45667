@@ -1,3 +1,3 @@
-import { useToast, toast } from "@/hooks/use-toast";
-
-export { useToast, toast };
+// UI-only stub for useToast and toast
+export const useToast = () => ({ toasts: [], toast: () => {} });
+export const toast = () => {};
