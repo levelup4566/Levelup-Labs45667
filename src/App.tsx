@@ -106,6 +106,13 @@ const App = () => {
                 </ErrorBoundary>
               } />
 
+              {/* Course Detail Page */}
+              <Route path="/course/:courseSlug" element={
+                <ErrorBoundary>
+                  <CourseDetail />
+                </ErrorBoundary>
+              } />
+
               {/* Main application routes */}
               <Route path="/course-dashboard" element={
                 <ErrorBoundary>
