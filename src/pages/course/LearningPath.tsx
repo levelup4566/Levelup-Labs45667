@@ -213,8 +213,27 @@ const learningPaths = {
   }
 };
 
+// Course slug mapping for navigation
+const courseSlugMap: { [key: string]: string } = {
+  'HTML & CSS Mastery': 'html-css-mastery',
+  'JavaScript Essentials': 'javascript-essentials',
+  'React.js Complete Guide': 'react-complete-guide',
+  'TypeScript for React': 'typescript-react',
+  'Node.js & Express': 'nodejs-express',
+  'Database Design & SQL': 'database-sql',
+  'Design Principles & Theory': 'design-principles',
+  'User Experience Design': 'ux-design',
+  'Figma Complete Course': 'figma-course',
+  'Adobe Creative Suite': 'adobe-suite',
+  'Python for Data Science': 'python-data-science',
+  'Statistics & Probability': 'statistics-probability',
+  'Machine Learning Fundamentals': 'ml-fundamentals',
+  'Deep Learning with TensorFlow': 'deep-learning-tensorflow'
+};
+
 const LearningPath = () => {
   const { goalId, timeId, experienceId } = useParams();
+  const navigate = useNavigate();
   const [selectedTime, setSelectedTime] = useState('2');
   
   const pathData = learningPaths[goalId as keyof typeof learningPaths];
