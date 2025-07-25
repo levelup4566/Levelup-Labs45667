@@ -22,6 +22,7 @@ import SignUpPage from "./routes/sign-up";
 // Import specific course components
 import WebDevCourse from "./pages/courses/WebDevCourse";
 import LearningPath from "./pages/course/LearningPath";
+import CourseDetail from "./pages/course/CourseDetail";
 
 import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
 
