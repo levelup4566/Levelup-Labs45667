@@ -375,10 +375,18 @@ const LearningPath = () => {
                           ))}
                         </div>
                         
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="w-full hover:bg-slate-50"
                           disabled={course.completed}
+                          onClick={() => {
+                            if (!course.completed) {
+                              const courseSlug = courseSlugMap[course.title];
+                              if (courseSlug) {
+                                navigate(`/course/${courseSlug}`);
+                              }
+                            }
+                          }}
                         >
                           {course.completed ? (
                             <>
