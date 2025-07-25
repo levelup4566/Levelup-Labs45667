@@ -23,8 +23,8 @@ import SignUpPage from "./routes/sign-up";
 import WebDevCourse from "./pages/courses/WebDevCourse";
 import LearningPath from "./pages/course/LearningPath";
 import CourseDetail from "./pages/course/CourseDetail";
+import useUserCredentials from "./hooks/useUser";
 
-import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
 
 /**
  * App Component - Root component that sets up the application structure
@@ -35,6 +35,7 @@ import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
  * - Routing with error boundaries for fault isolation
  */
 const App = () => {
+
   // Create and configure the QueryClient with robust error handling
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
