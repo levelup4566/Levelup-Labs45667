@@ -6,6 +6,10 @@ import RouterHeader from "@/components/layout/RouterHeader";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Sparkles, Trophy, Target } from "lucide-react";
 import { useUser } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
+import OnboardingCheck from "@/components/database/onboarding/OnboardingCheck";
+import OnboardingInsert from "@/components/database/onboarding/OnboardingInsert";
+
 
 // Define the onboarding steps in order
 const ONBOARDING_STEPS = [
@@ -64,6 +68,7 @@ const OnboardingLayout = () => {
   const location = useLocation();
 
   const { user } = useUser();
+  const {isSignedIn , userId} = useAuth()
   // Removed enrollInCourse for UI-only mode
 
   console.log("user", user);
@@ -99,7 +104,7 @@ const OnboardingLayout = () => {
     if (!canContinue) return;
 
     // After selecting Web Dev, route directly to WebDevCourse
-    if (isLastStep) {
+    if (isLastStep && isSignedIn) {
       // If this is the last step, finish onboarding and navigate to specific course path
       const { learning_goal, time_commitment, experience_level } =
         onboardingData;
@@ -110,8 +115,17 @@ const OnboardingLayout = () => {
       );
 
       console.log("Onboarding complete with data:", onboardingData);
-      console.log("Navigating to course path:", coursePath);
 
+      console.log("Navigating to course path:", coursePath);
+      OnboardingCheck(userId , learning_goal , time_commitment , experience_level).then((data)=>{
+        if(!data){
+          OnboardingInsert(userId , learning_goal , time_commitment , experience_level)
+        }else{
+          console.log("user already there with all the onboarding data nothing needs to be updated" , data)
+        }
+      }).catch((err)=>{
+        console.error(err)
+      })
       navigate(coursePath);
       return;
     }
@@ -163,7 +177,7 @@ const OnboardingLayout = () => {
                 const isCompleted = index < currentStepIndex;
 
                 return (
-                  <React.Fragment key={step.path}>
+                  <div key={step.path} className="onboarding-step-fragment">
                     <div className="flex flex-col items-center relative">
                       <div
                         className={`
@@ -205,7 +219,7 @@ const OnboardingLayout = () => {
                         }`}
                       />
                     )}
-                  </React.Fragment>
+                  </div>
                 );
               })}
             </div>

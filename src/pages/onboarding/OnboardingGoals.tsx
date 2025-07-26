@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useOnboarding } from "./OnboardingLayout";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@clerk/clerk-react";
 import {
   Code2,
   Palette,
