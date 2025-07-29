@@ -383,7 +383,7 @@ const LearningPath = () => {
                             if (!course.completed) {
                               const courseSlug = courseSlugMap[course.title];
                               if (courseSlug) {
-                                navigate(`/course/${courseSlug}`);
+                                navigate(`/course/${courseSlug}?timeCommitment=${timeId}&goal=${goalId}&experience=${experienceId}`);
                               }
                             }
                           }}
