@@ -183,7 +183,7 @@ const playlistsByTimeCommitment = {
 const timeCommitmentConfig = {
   minimal: {
     name: 'Minimal Commitment',
-    badge: { color: 'amber', text: 'Bite-sized Learning' },
+    badge: { color: 'amber', text: 'Simple YouTube Playlist' },
     description: 'Short, focused lessons perfect for busy schedules',
     sessionLength: '15-30 min sessions',
     gradient: 'from-amber-500 to-orange-500',
