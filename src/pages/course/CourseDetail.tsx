@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Clock, 
-  Users, 
-  Award, 
-  Star, 
-  BookOpen, 
-  Play, 
-  CheckCircle, 
+import {
+  Clock,
+  Users,
+  Award,
+  Star,
+  BookOpen,
+  Play,
+  CheckCircle,
   ArrowRight,
   ArrowLeft,
   Youtube,
@@ -19,7 +19,8 @@ import {
   Palette,
   Brain,
   PlayCircle,
-  ExternalLink
+  ExternalLink,
+  Check
 } from 'lucide-react';
 
 // Course modules data
@@ -332,8 +333,24 @@ const courseModules = {
 const CourseDetail = () => {
   const { courseSlug } = useParams();
   const navigate = useNavigate();
-  
+
   const course = courseModules[courseSlug as keyof typeof courseModules];
+
+  // State to track module completion
+  const [moduleCompletions, setModuleCompletions] = useState<{[key: number]: boolean}>(
+    course ? course.modules.reduce((acc, module) => {
+      acc[module.id] = module.completed;
+      return acc;
+    }, {} as {[key: number]: boolean}) : {}
+  );
+
+  // Function to toggle module completion
+  const toggleModuleCompletion = (moduleId: number) => {
+    setModuleCompletions(prev => ({
+      ...prev,
+      [moduleId]: !prev[moduleId]
+    }));
+  };
   
   if (!course) {
     return (
@@ -351,7 +368,7 @@ const CourseDetail = () => {
   }
 
   const Icon = course.icon;
-  const completedModules = course.modules.filter(module => module.completed).length;
+  const completedModules = Object.values(moduleCompletions).filter(Boolean).length;
   const progressPercentage = (completedModules / course.totalModules) * 100;
 
   return (
@@ -435,9 +452,9 @@ const CourseDetail = () => {
                       <div className="flex items-center gap-3 mb-2">
                         <div className={`
                           w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm
-                          ${module.completed ? 'bg-green-500' : 'bg-slate-400'}
+                          ${moduleCompletions[module.id] ? 'bg-green-500' : 'bg-slate-400'}
                         `}>
-                          {module.completed ? (
+                          {moduleCompletions[module.id] ? (
                             <CheckCircle className="w-5 h-5" />
                           ) : (
                             module.id
@@ -477,28 +494,20 @@ const CourseDetail = () => {
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       </Button>
-                      
-                      <Button 
+
+                      <button
+                        onClick={() => toggleModuleCompletion(module.id)}
                         className={`
-                          ${module.completed 
-                            ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                            : `bg-gradient-to-r ${course.gradient} hover:opacity-90 text-white`
+                          flex items-center justify-center w-10 h-10 rounded-lg border-2 transition-all duration-200 cursor-pointer hover:scale-105
+                          ${moduleCompletions[module.id]
+                            ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-200'
+                            : 'bg-white border-slate-300 text-slate-400 hover:border-green-400 hover:text-green-500'
                           }
                         `}
-                        disabled={module.completed}
+                        title={moduleCompletions[module.id] ? 'Mark as incomplete' : 'Mark as complete'}
                       >
-                        {module.completed ? (
-                          <>
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            Completed
-                          </>
-                        ) : (
-                          <>
-                            <PlayCircle className="w-4 h-4 mr-2" />
-                            Start Module
-                          </>
-                        )}
-                      </Button>
+                        <Check className={`w-5 h-5 transition-all duration-200 ${moduleCompletions[module.id] ? 'scale-100' : 'scale-0'}`} />
+                      </button>
                     </div>
                   </div>
                 </CardHeader>
