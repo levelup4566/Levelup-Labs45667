@@ -564,9 +564,20 @@ const CourseDetail = () => {
 
   // Function to toggle module completion
   const toggleModuleCompletion = (moduleId: number) => {
+    const currentModule = course?.modules.find(module => module.id === moduleId);
+    const isCompleted = !moduleCompletions[moduleId];
+
+    // Console log the requested fields
+    console.log('=== Module Completion Toggle ===');
+    console.log('Learning Goal:', onboardingData?.learning_goal || 'Not set');
+    console.log('Current Course:', course?.title || courseSlug);
+    console.log('Current Module:', currentModule ? `${currentModule.title} (ID: ${moduleId})` : `Module ${moduleId}`);
+    console.log('Is Module Completed:', isCompleted);
+    console.log('================================');
+
     setModuleCompletions(prev => ({
       ...prev,
-      [moduleId]: !prev[moduleId]
+      [moduleId]: isCompleted
     }));
   };
   
