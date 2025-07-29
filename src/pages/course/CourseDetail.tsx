@@ -368,7 +368,7 @@ const CourseDetail = () => {
   }
 
   const Icon = course.icon;
-  const completedModules = course.modules.filter(module => module.completed).length;
+  const completedModules = Object.values(moduleCompletions).filter(Boolean).length;
   const progressPercentage = (completedModules / course.totalModules) * 100;
 
   return (
