@@ -333,8 +333,24 @@ const courseModules = {
 const CourseDetail = () => {
   const { courseSlug } = useParams();
   const navigate = useNavigate();
-  
+
   const course = courseModules[courseSlug as keyof typeof courseModules];
+
+  // State to track module completion
+  const [moduleCompletions, setModuleCompletions] = useState<{[key: number]: boolean}>(
+    course ? course.modules.reduce((acc, module) => {
+      acc[module.id] = module.completed;
+      return acc;
+    }, {} as {[key: number]: boolean}) : {}
+  );
+
+  // Function to toggle module completion
+  const toggleModuleCompletion = (moduleId: number) => {
+    setModuleCompletions(prev => ({
+      ...prev,
+      [moduleId]: !prev[moduleId]
+    }));
+  };
   
   if (!course) {
     return (
