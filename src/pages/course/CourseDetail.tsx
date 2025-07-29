@@ -183,7 +183,7 @@ const playlistsByTimeCommitment = {
 const timeCommitmentConfig = {
   minimal: {
     name: 'Minimal Commitment',
-    badge: { color: 'amber', text: 'Simple YouTube Playlist' },
+    badge: { color: 'amber', text: 'YouTube Playlist' },
     description: 'Short, focused lessons perfect for busy schedules',
     sessionLength: '15-30 min sessions',
     gradient: 'from-amber-500 to-orange-500',
@@ -192,7 +192,7 @@ const timeCommitmentConfig = {
   },
   moderate: {
     name: 'Moderate Commitment',
-    badge: { color: 'blue', text: 'Balanced Learning' },
+    badge: { color: 'blue', text: 'YouTube Playlist' },
     description: 'Steady progress with comprehensive coverage',
     sessionLength: '30-60 min sessions',
     gradient: 'from-blue-500 to-indigo-500',
@@ -201,7 +201,7 @@ const timeCommitmentConfig = {
   },
   significant: {
     name: 'Significant Commitment',
-    badge: { color: 'green', text: 'Accelerated Learning' },
+    badge: { color: 'green', text: 'YouTube Playlist' },
     description: 'In-depth exploration with hands-on projects',
     sessionLength: '1-2 hour sessions',
     gradient: 'from-green-500 to-emerald-500',
@@ -210,7 +210,7 @@ const timeCommitmentConfig = {
   },
   intensive: {
     name: 'Intensive Commitment',
-    badge: { color: 'purple', text: 'Immersive Learning' },
+    badge: { color: 'purple', text: 'YouTube Playlist' },
     description: 'Comprehensive bootcamp-style learning experience',
     sessionLength: '2+ hour sessions',
     gradient: 'from-purple-500 to-pink-500',
@@ -738,7 +738,7 @@ const CourseDetail = () => {
                           className="flex items-center gap-2"
                         >
                           <Youtube className="w-4 h-4" />
-                          {timeConfig ? `${timeConfig.badge.text} Playlist` : 'YouTube Playlist'}
+                          YouTube Playlist
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       </Button>
