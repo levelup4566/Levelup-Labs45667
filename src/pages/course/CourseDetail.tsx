@@ -427,17 +427,9 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract time commitment from referrer URL or default to 'moderate'
-  const getTimeCommitmentFromReferrer = () => {
-    const referrer = document.referrer;
-    if (referrer.includes('/minimal/')) return 'minimal';
-    if (referrer.includes('/moderate/')) return 'moderate';
-    if (referrer.includes('/significant/')) return 'significant';
-    if (referrer.includes('/intensive/')) return 'intensive';
-    return 'moderate'; // default
-  };
-
-  const timeCommitment = getTimeCommitmentFromReferrer();
+  // Extract time commitment from URL parameters or default to 'moderate'
+  const searchParams = new URLSearchParams(location.search);
+  const timeCommitment = searchParams.get('timeCommitment') || 'moderate';
   const timeConfig = timeCommitmentConfig[timeCommitment as keyof typeof timeCommitmentConfig];
 
   let course = courseModules[courseSlug as keyof typeof courseModules];
