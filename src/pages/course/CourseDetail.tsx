@@ -161,6 +161,20 @@ const playlistsByTimeCommitment = {
       'Error Handling': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
       'Working with APIs': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
       'JavaScript Project': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a'
+    },
+    'react-complete-guide': {
+      'React Fundamentals': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'State Management': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Component Lifecycle': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Props and Component Communication': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Lists and Keys': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Forms and Input Handling': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'React Router': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Context API': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Custom Hooks': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Performance Optimization': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Testing React Components': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'React Project': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ'
     }
   }
 };
