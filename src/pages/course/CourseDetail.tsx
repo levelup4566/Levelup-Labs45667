@@ -452,9 +452,9 @@ const CourseDetail = () => {
                       <div className="flex items-center gap-3 mb-2">
                         <div className={`
                           w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm
-                          ${module.completed ? 'bg-green-500' : 'bg-slate-400'}
+                          ${moduleCompletions[module.id] ? 'bg-green-500' : 'bg-slate-400'}
                         `}>
-                          {module.completed ? (
+                          {moduleCompletions[module.id] ? (
                             <CheckCircle className="w-5 h-5" />
                           ) : (
                             module.id
