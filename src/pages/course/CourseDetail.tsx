@@ -531,6 +531,7 @@ const CourseDetail = () => {
   const { courseSlug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { onboardingData } = useOnboardingData();
 
   // Extract time commitment from URL parameters or default to 'moderate'
   const searchParams = new URLSearchParams(location.search);
