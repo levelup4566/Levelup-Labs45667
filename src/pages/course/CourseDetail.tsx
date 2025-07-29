@@ -573,6 +573,7 @@ const CourseDetail = () => {
     console.log('Current Course:', course?.title || courseSlug);
     console.log('Current Module:', currentModule ? `${currentModule.title} (ID: ${moduleId})` : `Module ${moduleId}`);
     console.log('Is Module Completed:', isCompleted);
+    console.log('Total Modules in Course:', course?.totalModules || 'Unknown');
     console.log('================================');
 
     setModuleCompletions(prev => ({
