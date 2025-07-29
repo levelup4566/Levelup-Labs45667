@@ -83,6 +83,18 @@ const playlistsByTimeCommitment = {
       'CSS Animations': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8DJ2aBQZY-7Qv_bV-pOdSK',
       'Advanced CSS': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8YH8QlWa8d6t_8BhRNK7_4',
       'Final Project': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8mXD4E2tWdZVLfqjHLu_M2'
+    },
+    'javascript-essentials': {
+      'JavaScript Basics': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Control Structures': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Functions': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Objects and Arrays': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'DOM Manipulation': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'ES6+ Features': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Asynchronous JavaScript': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Error Handling': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Working with APIs': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'JavaScript Project': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR'
     }
   },
   intensive: {
