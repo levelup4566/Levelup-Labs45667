@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useOnboardingData } from '@/hooks/useOnboardingData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -530,6 +531,7 @@ const CourseDetail = () => {
   const { courseSlug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { onboardingData } = useOnboardingData();
 
   // Extract time commitment from URL parameters or default to 'moderate'
   const searchParams = new URLSearchParams(location.search);
@@ -562,9 +564,21 @@ const CourseDetail = () => {
 
   // Function to toggle module completion
   const toggleModuleCompletion = (moduleId: number) => {
+    const currentModule = course?.modules.find(module => module.id === moduleId);
+    const isCompleted = !moduleCompletions[moduleId];
+
+    // Console log the requested fields
+    console.log('=== Module Completion Toggle ===');
+    console.log('Learning Goal:', onboardingData?.learning_goal || 'Not set');
+    console.log('Current Course:', course?.title || courseSlug);
+    console.log('Current Module:', currentModule ? `${currentModule.title} (ID: ${moduleId})` : `Module ${moduleId}`);
+    console.log('Is Module Completed:', isCompleted);
+    console.log('Total Modules in Course:', course?.totalModules || 'Unknown');
+    console.log('================================');
+
     setModuleCompletions(prev => ({
       ...prev,
-      [moduleId]: !prev[moduleId]
+      [moduleId]: isCompleted
     }));
   };
   
