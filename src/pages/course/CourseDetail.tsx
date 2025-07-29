@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +22,98 @@ import {
   ExternalLink,
   Check
 } from 'lucide-react';
+
+// Different playlist URLs based on time commitment
+const playlistsByTimeCommitment = {
+  minimal: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf_ZNmuQSXdS197Oyr1L9sPB',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8JIgLcu3sHigvQjTw_aC9C',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLr6-GrHUlVf9RlGiXNUsI8G6sHtJDdDKQ',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH_2fqpffx9RmjuW4LI1F2TB',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8DJ2aBQZY-7Qv_bV-pOdSK',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8YH8QlWa8d6t_8BhRNK7_4',
+      'Final Project': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8mXD4E2tWdZVLfqjHLu_M2'
+    }
+  },
+  moderate: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnQ048Pa8sAqJoVRhx8TJtM',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLWKjhJtqVAbleDe2_ZqZjZr2w0z5B5NZy',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmOC7pKaP4_XjCvZVc6Bm9G',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmiUw1_9bx5T3b6H9E7G3Q7',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnQ048Pa8sAqJoVRhx8TJtM',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLWKjhJtqVAbleDe2_ZqZjZr2w0z5B5NZy',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmOC7pKaP4_XjCvZVc6Bm9G',
+      'Final Project': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmiUw1_9bx5T3b6H9E7G3Q7'
+    }
+  },
+  significant: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf_ZNmuQSXdS197Oyr1L9sPB',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8JIgLcu3sHigvQjTw_aC9C',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLr6-GrHUlVf9RlGiXNUsI8G6sHtJDdDKQ',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH_2fqpffx9RmjuW4LI1F2TB',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8DJ2aBQZY-7Qv_bV-pOdSK',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8YH8QlWa8d6t_8BhRNK7_4',
+      'Final Project': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8mXD4E2tWdZVLfqjHLu_M2'
+    }
+  },
+  intensive: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'Final Project': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x'
+    }
+  }
+};
+
+// Time commitment UI configurations
+const timeCommitmentConfig = {
+  minimal: {
+    name: 'Minimal Commitment',
+    badge: { color: 'amber', text: 'Bite-sized Learning' },
+    description: 'Short, focused lessons perfect for busy schedules',
+    sessionLength: '15-30 min sessions',
+    gradient: 'from-amber-500 to-orange-500',
+    bgColor: 'bg-amber-50',
+    intensity: 'Casual Explorer'
+  },
+  moderate: {
+    name: 'Moderate Commitment',
+    badge: { color: 'blue', text: 'Balanced Learning' },
+    description: 'Steady progress with comprehensive coverage',
+    sessionLength: '30-60 min sessions',
+    gradient: 'from-blue-500 to-indigo-500',
+    bgColor: 'bg-blue-50',
+    intensity: 'Consistent Learner'
+  },
+  significant: {
+    name: 'Significant Commitment',
+    badge: { color: 'green', text: 'Accelerated Learning' },
+    description: 'In-depth exploration with hands-on projects',
+    sessionLength: '1-2 hour sessions',
+    gradient: 'from-green-500 to-emerald-500',
+    bgColor: 'bg-green-50',
+    intensity: 'Dedicated Student'
+  },
+  intensive: {
+    name: 'Intensive Commitment',
+    badge: { color: 'purple', text: 'Immersive Learning' },
+    description: 'Comprehensive bootcamp-style learning experience',
+    sessionLength: '2+ hour sessions',
+    gradient: 'from-purple-500 to-pink-500',
+    bgColor: 'bg-purple-50',
+    intensity: 'Power Learner'
+  }
+};
 
 // Course modules data
 const courseModules = {
@@ -333,6 +425,20 @@ const courseModules = {
 const CourseDetail = () => {
   const { courseSlug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Extract time commitment from referrer URL or default to 'moderate'
+  const getTimeCommitmentFromReferrer = () => {
+    const referrer = document.referrer;
+    if (referrer.includes('/minimal/')) return 'minimal';
+    if (referrer.includes('/moderate/')) return 'moderate';
+    if (referrer.includes('/significant/')) return 'significant';
+    if (referrer.includes('/intensive/')) return 'intensive';
+    return 'moderate'; // default
+  };
+
+  const timeCommitment = getTimeCommitmentFromReferrer();
+  const timeConfig = timeCommitmentConfig[timeCommitment as keyof typeof timeCommitmentConfig];
 
   const course = courseModules[courseSlug as keyof typeof courseModules];
 
