@@ -494,28 +494,20 @@ const CourseDetail = () => {
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       </Button>
-                      
-                      <Button 
+
+                      <button
+                        onClick={() => toggleModuleCompletion(module.id)}
                         className={`
-                          ${module.completed 
-                            ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                            : `bg-gradient-to-r ${course.gradient} hover:opacity-90 text-white`
+                          flex items-center justify-center w-10 h-10 rounded-lg border-2 transition-all duration-200 cursor-pointer hover:scale-105
+                          ${moduleCompletions[module.id]
+                            ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-200'
+                            : 'bg-white border-slate-300 text-slate-400 hover:border-green-400 hover:text-green-500'
                           }
                         `}
-                        disabled={module.completed}
+                        title={moduleCompletions[module.id] ? 'Mark as incomplete' : 'Mark as complete'}
                       >
-                        {module.completed ? (
-                          <>
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            Completed
-                          </>
-                        ) : (
-                          <>
-                            <PlayCircle className="w-4 h-4 mr-2" />
-                            Start Module
-                          </>
-                        )}
-                      </Button>
+                        <Check className={`w-5 h-5 transition-all duration-200 ${moduleCompletions[module.id] ? 'scale-100' : 'scale-0'}`} />
+                      </button>
                     </div>
                   </div>
                 </CardHeader>
