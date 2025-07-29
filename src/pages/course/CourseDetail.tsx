@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +22,202 @@ import {
   ExternalLink,
   Check
 } from 'lucide-react';
+
+// Different playlist URLs based on time commitment
+const playlistsByTimeCommitment = {
+  minimal: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf_ZNmuQSXdS197Oyr1L9sPB',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8JIgLcu3sHigvQjTw_aC9C',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLr6-GrHUlVf9RlGiXNUsI8G6sHtJDdDKQ',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH_2fqpffx9RmjuW4LI1F2TB',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8DJ2aBQZY-7Qv_bV-pOdSK',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8YH8QlWa8d6t_8BhRNK7_4',
+      'Final Project': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8mXD4E2tWdZVLfqjHLu_M2'
+    },
+    'javascript-essentials': {
+      'JavaScript Basics': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'Control Structures': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'Functions': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'Objects and Arrays': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'DOM Manipulation': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'ES6+ Features': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'Asynchronous JavaScript': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'Error Handling': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'Working with APIs': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX',
+      'JavaScript Project': 'https://youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX'
+    },
+    'react-complete-guide': {
+      'React Fundamentals': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'State Management': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Component Lifecycle': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Props and Component Communication': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Lists and Keys': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Forms and Input Handling': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'React Router': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Context API': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Custom Hooks': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Performance Optimization': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'Testing React Components': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM',
+      'React Project': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8ULJ-2Vv4I5JO9lxsKuzkM'
+    }
+  },
+  moderate: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnQ048Pa8sAqJoVRhx8TJtM',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLWKjhJtqVAbleDe2_ZqZjZr2w0z5B5NZy',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmOC7pKaP4_XjCvZVc6Bm9G',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmiUw1_9bx5T3b6H9E7G3Q7',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnQ048Pa8sAqJoVRhx8TJtM',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLWKjhJtqVAbleDe2_ZqZjZr2w0z5B5NZy',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmOC7pKaP4_XjCvZVc6Bm9G',
+      'Final Project': 'https://youtube.com/playlist?list=PLWKjhJtqVAbmiUw1_9bx5T3b6H9E7G3Q7'
+    },
+    'javascript-essentials': {
+      'JavaScript Basics': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'Control Structures': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'Functions': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'Objects and Arrays': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'DOM Manipulation': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'ES6+ Features': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'Asynchronous JavaScript': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'Error Handling': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'Working with APIs': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK',
+      'JavaScript Project': 'https://youtube.com/playlist?list=PLSQl0a2vh4HC-Zm3qC1PSLZEKh3F2nMVK'
+    },
+    'react-complete-guide': {
+      'React Fundamentals': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'State Management': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Component Lifecycle': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Props and Component Communication': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Lists and Keys': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Forms and Input Handling': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'React Router': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Context API': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Custom Hooks': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Performance Optimization': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Testing React Components': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'React Project': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a'
+    }
+  },
+  significant: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf_ZNmuQSXdS197Oyr1L9sPB',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8JIgLcu3sHigvQjTw_aC9C',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLr6-GrHUlVf9RlGiXNUsI8G6sHtJDdDKQ',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH_2fqpffx9RmjuW4LI1F2TB',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8DJ2aBQZY-7Qv_bV-pOdSK',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8YH8QlWa8d6t_8BhRNK7_4',
+      'Final Project': 'https://youtube.com/playlist?list=PLZlA0Gpn_vH8mXD4E2tWdZVLfqjHLu_M2'
+    },
+    'javascript-essentials': {
+      'JavaScript Basics': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Control Structures': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Functions': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Objects and Arrays': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'DOM Manipulation': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'ES6+ Features': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Asynchronous JavaScript': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Error Handling': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Working with APIs': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'JavaScript Project': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR'
+    },
+    'react-complete-guide': {
+      'React Fundamentals': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'State Management': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Component Lifecycle': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Props and Component Communication': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Lists and Keys': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Forms and Input Handling': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'React Router': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Context API': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Custom Hooks': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Performance Optimization': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'Testing React Components': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR',
+      'React Project': 'https://youtube.com/playlist?list=PLDyQo7g0_nsVHmyZtVBunfDP-WpyBOAwR'
+    }
+  },
+  intensive: {
+    'html-css-mastery': {
+      'HTML Fundamentals': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Fundamentals': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Layout - Flexbox': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Grid Layout': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'Responsive Design': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'CSS Animations': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'Advanced CSS': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x',
+      'Final Project': 'https://youtube.com/playlist?list=PLrAjfiVdNRcSxhGQQtS7E0Hhhn6hGRE2x'
+    },
+    'javascript-essentials': {
+      'JavaScript Basics': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Control Structures': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Functions': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Objects and Arrays': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'DOM Manipulation': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'ES6+ Features': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Asynchronous JavaScript': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Error Handling': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'Working with APIs': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a',
+      'JavaScript Project': 'https://youtube.com/playlist?list=PLWKjhJtqVAbnSo8E4bHdFuWeFGTOdMx6a'
+    },
+    'react-complete-guide': {
+      'React Fundamentals': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'State Management': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Component Lifecycle': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Props and Component Communication': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Lists and Keys': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Forms and Input Handling': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'React Router': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Context API': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Custom Hooks': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Performance Optimization': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'Testing React Components': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ',
+      'React Project': 'https://youtube.com/playlist?list=PLNqp92_EXZBJ4CBroxVBJEpAXoz1g-naZ'
+    }
+  }
+};
+
+// Time commitment UI configurations
+const timeCommitmentConfig = {
+  minimal: {
+    name: 'Minimal Commitment',
+    badge: { color: 'amber', text: 'YouTube Playlist' },
+    description: 'Short, focused lessons perfect for busy schedules',
+    sessionLength: '15-30 min sessions',
+    gradient: 'from-amber-500 to-orange-500',
+    bgColor: 'bg-amber-50',
+    intensity: 'Casual Explorer'
+  },
+  moderate: {
+    name: 'Moderate Commitment',
+    badge: { color: 'blue', text: 'YouTube Playlist' },
+    description: 'Steady progress with comprehensive coverage',
+    sessionLength: '30-60 min sessions',
+    gradient: 'from-blue-500 to-indigo-500',
+    bgColor: 'bg-blue-50',
+    intensity: 'Consistent Learner'
+  },
+  significant: {
+    name: 'Significant Commitment',
+    badge: { color: 'green', text: 'YouTube Playlist' },
+    description: 'In-depth exploration with hands-on projects',
+    sessionLength: '1-2 hour sessions',
+    gradient: 'from-green-500 to-emerald-500',
+    bgColor: 'bg-green-50',
+    intensity: 'Dedicated Student'
+  },
+  intensive: {
+    name: 'Intensive Commitment',
+    badge: { color: 'purple', text: 'YouTube Playlist' },
+    description: 'Comprehensive bootcamp-style learning experience',
+    sessionLength: '2+ hour sessions',
+    gradient: 'from-purple-500 to-pink-500',
+    bgColor: 'bg-purple-50',
+    intensity: 'Power Learner'
+  }
+};
 
 // Course modules data
 const courseModules = {
@@ -333,8 +529,28 @@ const courseModules = {
 const CourseDetail = () => {
   const { courseSlug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const course = courseModules[courseSlug as keyof typeof courseModules];
+  // Extract time commitment from URL parameters or default to 'moderate'
+  const searchParams = new URLSearchParams(location.search);
+  const timeCommitment = searchParams.get('timeCommitment') || 'moderate';
+  const timeConfig = timeCommitmentConfig[timeCommitment as keyof typeof timeCommitmentConfig];
+
+  let course = courseModules[courseSlug as keyof typeof courseModules];
+
+  // Add playlist URLs based on time commitment
+  if (course && timeCommitment && playlistsByTimeCommitment[timeCommitment as keyof typeof playlistsByTimeCommitment]) {
+    const playlistMap = playlistsByTimeCommitment[timeCommitment as keyof typeof playlistsByTimeCommitment][courseSlug as keyof typeof playlistsByTimeCommitment.minimal];
+    if (playlistMap) {
+      course = {
+        ...course,
+        modules: course.modules.map(module => ({
+          ...module,
+          playlistUrl: playlistMap[module.title as keyof typeof playlistMap] || module.playlistUrl
+        }))
+      };
+    }
+  }
 
   // State to track module completion
   const [moduleCompletions, setModuleCompletions] = useState<{[key: number]: boolean}>(
@@ -393,18 +609,50 @@ const CourseDetail = () => {
           </Button>
           
           <div className="text-center">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-600/10 border border-blue-200 text-slate-700 text-sm font-semibold mb-6">
-              <Icon className="w-4 h-4 mr-2 text-blue-500" />
-              {course.level} Course
+            <div className="space-y-3 mb-6">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-600/10 border border-blue-200 text-slate-700 text-sm font-semibold">
+                <Icon className="w-4 h-4 mr-2 text-blue-500" />
+                {course.level} Course
+              </div>
+
+              {timeConfig && (
+                <div className={`inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r ${timeConfig.gradient}/10 border ${
+                  timeConfig.badge.color === 'amber' ? 'border-amber-200' :
+                  timeConfig.badge.color === 'blue' ? 'border-blue-200' :
+                  timeConfig.badge.color === 'green' ? 'border-green-200' :
+                  'border-purple-200'
+                } text-slate-700 text-sm font-semibold ml-3`}>
+                  <Clock className={`w-4 h-4 mr-2 ${
+                    timeConfig.badge.color === 'amber' ? 'text-amber-500' :
+                    timeConfig.badge.color === 'blue' ? 'text-blue-500' :
+                    timeConfig.badge.color === 'green' ? 'text-green-500' :
+                    'text-purple-500'
+                  }`} />
+                  {timeConfig.badge.text}
+                </div>
+              )}
             </div>
             
             <h1 className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r ${course.gradient} bg-clip-text text-transparent`}>
               {course.title}
             </h1>
             
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-4">
               {course.description}
             </p>
+
+            {timeConfig && (
+              <div className={`max-w-2xl mx-auto p-4 rounded-lg ${timeConfig.bgColor} border border-slate-200 mb-8`}>
+                <div className="text-center">
+                  <h3 className="font-semibold text-slate-900 mb-2">{timeConfig.name} Path</h3>
+                  <p className="text-sm text-slate-700 mb-2">{timeConfig.description}</p>
+                  <div className="flex items-center justify-center gap-4 text-xs text-slate-600">
+                    <span>💡 {timeConfig.sessionLength}</span>
+                    <span>🎯 {timeConfig.intensity}</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
               <div className="flex items-center gap-2 text-slate-600">
