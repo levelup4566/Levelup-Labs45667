@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useOnboardingData } from '@/hooks/useOnboardingData';
+import { useUser } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { SignificantProgressCheck , SignificantProgressDelete , SignificantProgressInsert } from '@/components/database/progress/SignificantProgress';
+import { ModerateProgressCheck , ModerateProgressDelete ,ModerateProgressInsert } from '@/components/database/progress/ModerateProgress';
+import { IntensiveProgressCheck , IntensiveProgressDelete , IntensiveProgressInsert } from '@/components/database/progress/IntensiveProgress';
+import { MinimalProgressCheck , MinimalProgressDelete , MinimalProgressInsert } from '@/components/database/progress/MinimalProgress';
 import {
   Clock,
   Users,
@@ -532,6 +537,7 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { onboardingData } = useOnboardingData();
+  const { user } = useUser();
 
   // Extract time commitment from URL parameters or default to 'moderate'
   const searchParams = new URLSearchParams(location.search);
@@ -562,36 +568,94 @@ const CourseDetail = () => {
     }, {} as {[key: number]: boolean}) : {}
   );
 
+  useEffect(() => {
+    const fetchCompletedModules = async () => {
+      if (!user?.id) return;
+      let completedData = [];
+      if (timeCommitment === 'significant') {
+        completedData = await SignificantProgressCheck(user.id);
+      } else if (timeCommitment === 'moderate') {
+        completedData = await ModerateProgressCheck(user.id);
+      } else if (timeCommitment === 'intensive') {
+        completedData = await IntensiveProgressCheck(user.id);
+      } else if (timeCommitment === 'minimal') {
+        completedData = await MinimalProgressCheck(user.id);
+      }
+      if (!completedData) return;
+      const completedMap: Record<number, boolean> = {};
+      completedData.forEach((row: any) => {
+        if (row.module_id && row.current_course === (course?.title || courseSlug)) {
+          completedMap[row.module_id] = true;
+        }
+      });
+      setModuleCompletions(prev => ({ ...prev, ...completedMap }));
+    };
+    fetchCompletedModules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, courseSlug, timeCommitment]);
+
   // Function to toggle module completion
-  const toggleModuleCompletion = (moduleId: number) => {
+  const toggleModuleCompletion = async (moduleId: number) => {
     const currentModule = course?.modules.find(module => module.id === moduleId);
     const isCompleted = !moduleCompletions[moduleId];
+    const clerkUserId = user?.id;
+    const learningGoal = onboardingData?.learning_goal || '';
+    const currentCourse = course?.title || courseSlug;
+    const totalModulesInCourse = course?.totalModules || 0;
+    const currentModuleTitle = currentModule?.title || '';
 
     // Console log the requested fields
     console.log('=== Module Completion Toggle ===');
-    console.log('Learning Goal:', onboardingData?.learning_goal || 'Not set');
-    console.log('Current Course:', course?.title || courseSlug);
+    console.log('Learning Goal:', learningGoal || 'Not set');
+    console.log(moduleCompletions)
+    console.log('Current Course:', currentCourse);
     console.log('Current Module:', currentModule ? `${currentModule.title} (ID: ${moduleId})` : `Module ${moduleId}`);
     console.log('Is Module Completed:', isCompleted);
-    console.log('Total Modules in Course:', course?.totalModules || 'Unknown');
+    console.log('Total Modules in Course:', totalModulesInCourse || 'Unknown');
     console.log('================================');
 
     setModuleCompletions(prev => ({
       ...prev,
       [moduleId]: isCompleted
     }));
+
+    // Database sync
+    if (!clerkUserId) return;
+    if (isCompleted) {
+      if (timeCommitment === 'significant') {
+        await SignificantProgressInsert(clerkUserId, learningGoal, currentCourse, currentModuleTitle, totalModulesInCourse, isCompleted, moduleId);
+      } else if (timeCommitment === 'moderate') {
+        await ModerateProgressInsert(clerkUserId, learningGoal, currentCourse, currentModuleTitle, totalModulesInCourse, isCompleted, moduleId);
+      } else if (timeCommitment === 'intensive') {
+        await IntensiveProgressInsert(clerkUserId, learningGoal, currentCourse, currentModuleTitle, totalModulesInCourse, isCompleted, moduleId);
+      } else if (timeCommitment === 'minimal') {
+        await MinimalProgressInsert(clerkUserId, learningGoal, currentCourse, currentModuleTitle, totalModulesInCourse, isCompleted, moduleId);
+      }
+    } else {
+      if (timeCommitment === 'significant') {
+        await SignificantProgressDelete(moduleId, clerkUserId, currentCourse, currentModuleTitle);
+      } else if (timeCommitment === 'moderate') {
+        await ModerateProgressDelete(moduleId, clerkUserId, currentCourse, currentModuleTitle);
+      } else if (timeCommitment === 'intensive') {
+        await IntensiveProgressDelete(moduleId, clerkUserId, currentCourse, currentModuleTitle);
+      } else if (timeCommitment === 'minimal') {
+        await MinimalProgressDelete(moduleId, clerkUserId, currentCourse, currentModuleTitle);
+      }
+    }
   };
-  
+
   if (!course) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Course Not Found</h1>
-          <p className="text-slate-600">The requested course doesn't exist.</p>
-          <Button onClick={() => navigate(-1)} className="mt-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Go Back
-          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Course Not Found</h1>
+            <p className="text-slate-600">The requested course doesn't exist.</p>
+            <Button onClick={() => navigate(-1)} className="mt-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Go Back
+            </Button>
+          </div>
         </div>
       </div>
     );
