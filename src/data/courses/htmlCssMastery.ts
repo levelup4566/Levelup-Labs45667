@@ -1,0 +1,85 @@
+import { Code2 } from 'lucide-react';
+
+export const htmlCssMastery = {
+  title: 'HTML & CSS Mastery',
+  description: 'Master the fundamentals of web development with HTML5 and CSS3',
+  duration: '12h 30m',
+  level: 'Beginner',
+  icon: Code2,
+  gradient: 'from-blue-500 to-cyan-500',
+  totalModules: 8,
+  modules: [
+    {
+      id: 1,
+      title: 'HTML Fundamentals',
+      description: 'Learn the basics of HTML structure and semantic elements',
+      duration: '2h 15m',
+      topics: ['HTML Structure', 'Semantic Elements', 'Forms', 'Tables'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf_ZNmuQSXdS197Oyr1L9sPB',
+      completed: false
+    },
+    {
+      id: 2,
+      title: 'CSS Fundamentals',
+      description: 'Understanding CSS selectors, properties, and the box model',
+      duration: '2h 30m',
+      topics: ['CSS Selectors', 'Box Model', 'Typography', 'Colors'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf8JIgLcu3sHigvQjTw_aC9C',
+      completed: false
+    },
+    {
+      id: 3,
+      title: 'CSS Layout - Flexbox',
+      description: 'Master modern layout techniques with Flexbox',
+      duration: '1h 45m',
+      topics: ['Flex Container', 'Flex Items', 'Alignment', 'Responsive Design'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf9RlGiXNUsI8G6sHtJDdDKQ',
+      completed: false
+    },
+    {
+      id: 4,
+      title: 'CSS Grid Layout',
+      description: 'Create complex layouts with CSS Grid',
+      duration: '2h 0m',
+      topics: ['Grid Container', 'Grid Items', 'Grid Areas', 'Advanced Layouts'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      completed: false
+    },
+    {
+      id: 5,
+      title: 'Responsive Design',
+      description: 'Make your websites work on all devices',
+      duration: '1h 30m',
+      topics: ['Media Queries', 'Mobile First', 'Viewport', 'Breakpoints'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      completed: false
+    },
+    {
+      id: 6,
+      title: 'CSS Animations',
+      description: 'Bring your designs to life with animations',
+      duration: '1h 15m',
+      topics: ['Transitions', 'Keyframes', 'Transform', 'Performance'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      completed: false
+    },
+    {
+      id: 7,
+      title: 'Advanced CSS',
+      description: 'CSS variables, functions, and modern techniques',
+      duration: '1h 30m',
+      topics: ['CSS Variables', 'Calc Function', 'CSS Modules', 'PostCSS'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      completed: false
+    },
+    {
+      id: 8,
+      title: 'Final Project',
+      description: 'Build a complete responsive website',
+      duration: '45m',
+      topics: ['Project Planning', 'Implementation', 'Testing', 'Deployment'],
+      playlistUrl: 'https://youtube.com/playlist?list=PLr6-GrHUlVf8QSoeQdmAeq-vmYOGNL1mJ',
+      completed: false
+    }
+  ]
+};
