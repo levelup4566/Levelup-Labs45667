@@ -22,7 +22,7 @@ import SignUpPage from "./routes/sign-up";
 // Import specific course components
 import WebDevCourse from "./pages/courses/WebDevCourse";
 import LearningPath from "./pages/course/LearningPath";
-import CourseDetail from "./pages/course/CourseDetail";
+import CourseDetailNew from "./components/course/CourseDetailNew";
 import useUserCredentials from "./hooks/useUser";
 
 
@@ -110,7 +110,7 @@ const App = () => {
               {/* Course Detail Page */}
               <Route path="/course/:courseSlug" element={
                 <ErrorBoundary>
-                  <CourseDetail />
+                  <CourseDetailNew />
                 </ErrorBoundary>
               } />
 
