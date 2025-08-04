@@ -4,23 +4,42 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Menu, X, Layers, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { UserButton, useAuth } from '@clerk/clerk-react'
+import { UserButton, useAuth, useUser } from '@clerk/clerk-react'
+import LoginCheck from '../database/login/LoginCheck';
+import LoginInsert from '../database/login/LoginInsert';
+
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { isSignedIn } = useAuth();
+  const { userId , isSignedIn } = useAuth();
+  const { user } = useUser()
 
   useEffect(() => {
+    if (isSignedIn && user){
+      console.log("Clerk user id: " , userId)
+      console.log("About the user" , user)
+      LoginCheck(user.id).then((data)=>{
+        console.log("checked user" , data)
+        if (!data){
+          LoginInsert(user.id , user.emailAddresses[0].emailAddress , user.fullName , user.username)
+        }else{
+          console.log("user already there" , data)
+        }
+      }).catch((error)=> {
+        console.error("error checking user" , error)
+      })
+
+    }
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [userId]);
 
   const navLinks = [
     { title: 'Home', path: '/' },

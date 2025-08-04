@@ -3,14 +3,49 @@ import React from 'react';
 import { useUser } from '@clerk/clerk-react';
 import DashboardHeader from './DashboardHeader';
 import DashboardTabs from './DashboardTabs';
-import { useUserData } from '@/hooks/useUserData';
-import { useCourseProgress } from '@/hooks/useCourseProgress';
+// Removed broken imports for UI-only mode
 import { Star, Award, Calendar } from 'lucide-react';
+
+// Move this helper function to the top, before any usage
+const getTotalVideosForCourse = (courseId: string) => {
+  const courseTotalVideos: { [key: string]: number } = {
+    '1': 8, // webdev (from migration: 2 modules, 4+4 videos = 8)
+    '2': 4, // design (from migration: 2 modules, 3+1 videos = 4)
+    '3': 2, // data (from migration: 2 modules, 1+1 videos = 2)
+    // Add more as needed
+  };
+  return courseTotalVideos[courseId] || 0;
+};
+
+// Define which modules belong to each course (text IDs)
+const courseModulesMap: { [key: string]: string[] } = {
+  '1': ['module-1', 'module-2'], // Web Dev
+  '2': ['module-3'],            // Design
+  '3': ['module-4'],            // Data Science
+  // Add more as needed
+};
+
+// Helper to get all videos for a set of modules
+const getVideosForModules = (moduleIds: string[]) => {
+  // You need to fetch all videos from the DB and pass them here, or keep them in state
+  // For now, assume you have a 'videos' array in scope
+  return (window.allVideos || []).filter((v: any) => moduleIds.includes(v.module_id));
+};
+
+// Helper to get completed videos for a set of modules
+const getCompletedVideosForModules = (moduleIds: string[]) => {
+  return videoProgress.filter((v) => v.completed && moduleIds.includes(v.module_id));
+};
 
 const Dashboard = () => {
   const { user } = useUser();
   const { userStats, userSkills, userBadges, userProfile, loading: userLoading } = useUserData();
-  const { courseProgress, loading: progressLoading } = useCourseProgress();
+  const { courseProgress, loading: progressLoading, videoProgress } = useCourseProgress();
+
+  // Calculate overall progress (DB-driven)
+  const totalVideos = courseProgress.reduce((sum, course) => sum + getTotalVideosForCourse(course.course_id), 0);
+  const completedVideosAll = videoProgress.filter(v => v.completed).length;
+  const overallProgress = totalVideos > 0 ? Math.round((completedVideosAll / totalVideos) * 100) : 0;
 
   if (!user || userLoading || progressLoading || !userProfile) {
     return (
@@ -28,30 +63,36 @@ const Dashboard = () => {
     );
   }
 
+  // Helper to get completed videos for a course
+  // No longer needed, logic inlined below with correct type
+
   // Convert database data to component format
-  const courses = courseProgress.map(progress => ({
-    id: parseInt(progress.course_id) || 1,
-    courseId: progress.course_id,
-    title: getCourseTitle(progress.course_id),
-    progress: progress.progress_percentage,
-    totalModules: getTotalModulesForCourse(progress.course_id),
-    completedModules: Math.floor((progress.progress_percentage / 100) * getTotalModulesForCourse(progress.course_id)),
-    lastAccessed: formatLastAccessed(progress.last_accessed_at),
-    learning_goal: getCourseGoal(progress.course_id),
-    time_commitment: progress.time_commitment,
-    experience_level: progress.experience_level
-  }));
+  const courses = courseProgress.map(progress => {
+    const alias = progress.courseId || progress.course_id || progress.id || '1';
+    // Only use user_progress (videoProgress) for counting videos
+    const videosForCourse = videoProgress.filter(v => v.course_id === alias);
+    const uniqueVideoIds = Array.from(new Set(videosForCourse.map(v => v.video_id)));
+    const totalVideos = uniqueVideoIds.length;
+    const completedVideos = videosForCourse.filter(v => v.completed).length;
+    const percent = totalVideos > 0 ? Math.round((completedVideos / totalVideos) * 100) : 0;
+    return {
+      id: alias,
+      courseId: alias,
+      title: getCourseTitle(alias),
+      progress: percent,
+      totalModules: totalVideos,
+      completedModules: completedVideos,
+      lastAccessed: formatLastAccessed(progress.last_accessed_at),
+      learning_goal: getCourseGoal(alias),
+      time_commitment: progress.time_commitment,
+      experience_level: progress.experience_level
+    };
+  });
 
   const skills = userSkills.map(skill => ({
     name: skill.skill_name,
     level: skill.skill_level
-  }));
-
-  const achievements = userBadges.slice(0, 3).map(badge => ({
-    name: badge.badge_name,
-    date: new Date(badge.earned_at).toLocaleDateString(),
-    icon: getIconComponent(badge.badge_icon)
-  }));
+  })); // No skill points
 
   return (
     <div className="container px-4 py-8 max-w-6xl">
@@ -59,8 +100,9 @@ const Dashboard = () => {
       <DashboardTabs 
         courses={courses} 
         skills={skills} 
-        achievements={achievements} 
         userProfile={userProfile} // Pass userProfile for deep linking
+        userStats={userStats} // Pass userStats to SkillsCard
+        overallProgress={overallProgress} // Pass to OverviewCards
       />
     </div>
   );

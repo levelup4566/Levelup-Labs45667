@@ -5,12 +5,9 @@ import { useUser } from '@clerk/clerk-react';
 import RouterHeader from '@/components/layout/RouterHeader';
 import Footer from '@/components/layout/Footer';
 import CourseModule, { CourseModuleProps } from '@/components/course/CourseModule';
-import SkillPoints from '@/components/course/SkillPoints';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { useUserData } from '@/hooks/useUserData';
-import { useCourseProgress } from '@/hooks/useCourseProgress';
-import { useLearningStreak } from '@/hooks/useLearningStreak';
+import { useToast } from '@/components/ui/use-toast';
+// UI-only: Remove useUserData and useCourseProgress, use local state instead
 import { 
   ChevronLeft, 
   PlayCircle, 
@@ -214,9 +211,8 @@ const CourseDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useUser();
-  const { awardPoints, userProfile } = useUserData();
+  const { userProfile } = useUserData();
   const { markVideoComplete, enrollInCourse, getCompletedVideos, isVideoCompleted, courseProgress } = useCourseProgress();
-  const { updateStreak } = useLearningStreak();
   
   const [learningGoal, setLearningGoal] = useState<string>('');
   const [experienceLevel, setExperienceLevel] = useState<string>('');
@@ -336,11 +332,10 @@ const CourseDashboard = () => {
       }
 
       await markVideoComplete(videoId, courseId, moduleId);
-      await updateStreak();
       
       toast({
         title: "Lesson completed!",
-        description: "Great job! You earned 5 skill points.",
+        description: "Great job! Keep up the good work.",
       });
     } else {
       toast({
@@ -472,12 +467,6 @@ const CourseDashboard = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
-              <SkillPoints 
-                completedVideos={completedVideos}
-                completedProjects={[]}
-                totalVideos={totalVideos}
-                totalProjects={1}
-              />
               
               <div className="bg-card rounded-lg border shadow-sm p-4 mb-4 sticky top-24">
                 <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
@@ -503,10 +492,9 @@ const CourseDashboard = () => {
                     className="w-full gap-2"
                     onClick={async () => {
                       if (user) {
-                        await awardPoints(20, 'Completed certification exam');
                         toast({
                           title: "Certification completed!",
-                          description: "You earned 20 skill points for completing the certification exam!",
+                          description: "Congratulations on completing the certification exam!",
                         });
                       }
                     }}

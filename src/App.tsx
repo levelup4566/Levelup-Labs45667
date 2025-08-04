@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,13 +21,10 @@ import SignUpPage from "./routes/sign-up";
 
 // Import specific course components
 import WebDevCourse from "./pages/courses/WebDevCourse";
-import DesignCourse from "./pages/courses/DesignCourse";
-import DataScienceCourse from "./pages/courses/DataScienceCourse";
+import LearningPath from "./pages/course/LearningPath";
+import CourseDetail from "./pages/course/CourseDetail";
+import useUserCredentials from "./hooks/useUser";
 
-import { useEnsureUserProfile } from "@/hooks/useEnsureUserProfile";
-import { useSupabaseAuthSync } from "@/hooks/useSupabaseAuthSync";
-import { useAuth } from "@clerk/clerk-react";
-import { useSupabaseClient } from "@/integrations/supabase/client";
 
 /**
  * App Component - Root component that sets up the application structure
@@ -39,8 +35,7 @@ import { useSupabaseClient } from "@/integrations/supabase/client";
  * - Routing with error boundaries for fault isolation
  */
 const App = () => {
-  const supabase = useSupabaseClient();
-  useEnsureUserProfile(supabase);
+
   // Create and configure the QueryClient with robust error handling
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
@@ -48,7 +43,7 @@ const App = () => {
         retry: 1, // Limit retries to prevent excessive network traffic on failure
         refetchOnWindowFocus: false, // Disable auto-refetch for better performance
         staleTime: 5 * 60 * 1000, // 5 minutes of cache validity
-        gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes 
+        gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes
         meta: {
           // Handle errors at the query level
           onError: (error: unknown) => {
@@ -93,18 +88,32 @@ const App = () => {
                   <SignUpPage />
                 </ErrorBoundary>
               } />
-              
+
               {/* Onboarding flow */}
               <Route path="/onboarding" element={
                 <ErrorBoundary>
-                  <OnboardingLayout supabase={supabase} />
+                  <OnboardingLayout />
                 </ErrorBoundary>
               }>
                 <Route index element={<OnboardingGoals />} />
                 <Route path="time" element={<OnboardingTime />} />
                 <Route path="experience" element={<OnboardingExperience />} />
               </Route>
-              
+
+              {/* Learning Path Page */}
+              <Route path="/learning-path/:goalId/:timeId/:experienceId" element={
+                <ErrorBoundary>
+                  <LearningPath />
+                </ErrorBoundary>
+              } />
+
+              {/* Course Detail Page */}
+              <Route path="/course/:courseSlug" element={
+                <ErrorBoundary>
+                  <CourseDetail />
+                </ErrorBoundary>
+              } />
+
               {/* Main application routes */}
               <Route path="/course-dashboard" element={
                 <ErrorBoundary>
@@ -124,6 +133,16 @@ const App = () => {
 
               {/* Specific course routes based on combinations */}
               {/* Web Development Courses */}
+              <Route path="/courses/coding" element={
+                <ErrorBoundary>
+                  <WebDevCourse courseId="e6904d1a-5748-4524-9535-7955a368e5cb" timeCommitment="moderate" experienceLevel="beginner" />
+                </ErrorBoundary>
+              } />
+              <Route path="/courses/coding" element={
+                <ErrorBoundary>
+                  <WebDevCourse courseId="e6904d1a-5748-4524-9535-7955a368e5cb" timeCommitment="moderate" experienceLevel="beginner" />
+                </ErrorBoundary>
+              } />
               <Route path="/courses/coding/minimal/beginner" element={
                 <ErrorBoundary>
                   <WebDevCourse timeCommitment="minimal" experienceLevel="beginner" />
@@ -205,170 +224,6 @@ const App = () => {
                 </ErrorBoundary>
               } />
 
-              {/* Design Courses */}
-              <Route path="/courses/design/minimal/beginner" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="minimal" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/minimal/novice" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="minimal" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/minimal/intermediate" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="minimal" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/minimal/advanced" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="minimal" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/moderate/beginner" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="moderate" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/moderate/novice" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="moderate" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/moderate/intermediate" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="moderate" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/moderate/advanced" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="moderate" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/significant/beginner" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="significant" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/significant/novice" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="significant" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/significant/intermediate" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="significant" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/significant/advanced" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="significant" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/intensive/beginner" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="intensive" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/intensive/novice" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="intensive" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/intensive/intermediate" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="intensive" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/design/intensive/advanced" element={
-                <ErrorBoundary>
-                  <DesignCourse timeCommitment="intensive" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-
-              {/* Data Science Courses */}
-              <Route path="/courses/data/minimal/beginner" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="minimal" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/minimal/novice" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="minimal" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/minimal/intermediate" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="minimal" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/minimal/advanced" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="minimal" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/moderate/beginner" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="moderate" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/moderate/novice" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="moderate" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/moderate/intermediate" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="moderate" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/moderate/advanced" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="moderate" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/significant/beginner" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="significant" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/significant/novice" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="significant" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/significant/intermediate" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="significant" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/significant/advanced" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="significant" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/intensive/beginner" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="intensive" experienceLevel="beginner" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/intensive/novice" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="intensive" experienceLevel="novice" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/intensive/intermediate" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="intensive" experienceLevel="intermediate" />
-                </ErrorBoundary>
-              } />
-              <Route path="/courses/data/intensive/advanced" element={
-                <ErrorBoundary>
-                  <DataScienceCourse timeCommitment="intensive" experienceLevel="advanced" />
-                </ErrorBoundary>
-              } />
-              
               {/* 404 catch-all route */}
               <Route path="*" element={
                 <ErrorBoundary>
